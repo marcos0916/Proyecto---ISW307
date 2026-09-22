@@ -29,27 +29,35 @@
 
     <!-- Datos de coordenadas -->
     <ion-card class="coords-card" *ngIf="coords() as c">
-      <div class="stat">
-        <ion-icon name="locate-outline"></ion-icon>
-        <div class="stat-text">
-          <span class="stat-label">Latitud</span>
-          <span class="stat-value">{{ c.lat | number:'1.5-5' }}</span>
+      <div class="stats-row">
+        <div class="stat">
+          <ion-icon name="locate-outline"></ion-icon>
+          <div class="stat-text">
+            <span class="stat-label">Latitud</span>
+            <span class="stat-value">{{ c.lat | number:'1.5-5' }}</span>
+          </div>
+        </div>
+        <div class="stat">
+          <ion-icon name="navigate-outline"></ion-icon>
+          <div class="stat-text">
+            <span class="stat-label">Longitud</span>
+            <span class="stat-value">{{ c.lng | number:'1.5-5' }}</span>
+          </div>
+        </div>
+        <div class="stat">
+          <ion-icon name="radio-outline"></ion-icon>
+          <div class="stat-text">
+            <span class="stat-label">Precisión</span>
+            <span class="stat-value">±{{ c.accuracy | number:'1.1-1' }} m</span>
+          </div>
         </div>
       </div>
-      <div class="stat">
-        <ion-icon name="navigate-outline"></ion-icon>
-        <div class="stat-text">
-          <span class="stat-label">Longitud</span>
-          <span class="stat-value">{{ c.lng | number:'1.5-5' }}</span>
-        </div>
-      </div>
-      <div class="stat">
-        <ion-icon name="radio-outline"></ion-icon>
-        <div class="stat-text">
-          <span class="stat-label">Precisión</span>
-          <span class="stat-value">±{{ c.accuracy | number:'1.1-1' }} m</span>
-        </div>
-      </div>
+
+      <ion-item class="tracking-row" lines="none">
+        <ion-icon name="navigate-outline" slot="start" [color]="isTracking() ? 'success' : 'medium'"></ion-icon>
+        <ion-label>Seguimiento en vivo</ion-label>
+        <ion-toggle slot="end" [checked]="isTracking()" (ionChange)="toggleTracking()"></ion-toggle>
+      </ion-item>
     </ion-card>
 
     <!-- Estado inicial: aún no se ha capturado la ubicación -->

@@ -11,6 +11,7 @@ export interface Coordinates {
   providedIn: 'root'
 })
 export class GeoService {
+  private watchId: string | null = null;
 
   //Aqui Comprueba y, si aplica, solicita permisos nativos de ubicación.
   // En la web no existe un paso de solicitud independiente: el propio
@@ -70,5 +71,42 @@ export class GeoService {
   // Genera un enlace universal para compartir la ubicación
   generateShareUrl(lat: number, lng: number): string {
     return `https://www.google.com/maps?q=${lat},${lng}`;
+  }
+
+  // Inicia el seguimiento continuo de la posición (ubicación en tiempo real)
+  async startWatching(onUpdate: (coords: Coordinates) => void, onError: (message: string) => void): Promise<void> {
+    const hasPermission = await this.checkAndRequestPermissions();
+    if (!hasPermission) {
+      onError('Ubicación bloqueada. Habilítala manualmente en los permisos del sitio de tu navegador y vuelve a intentarlo.');
+      return;
+    }
+
+    this.watchId = await Geolocation.watchPosition(
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 },
+      (position, err) => {
+        if (position) {
+          onUpdate({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy
+          });
+          return;
+        }
+        // code 1 = PERMISSION_DENIED (revocado en caliente): ahí sí detenemos.
+        // El resto (señal débil, timeout puntual) es normal en un watch continuo;
+        // el navegador sigue intentando por su cuenta.
+        if (err?.code === 1) {
+          onError('Se revocó el permiso de ubicación.');
+        }
+      }
+    );
+  }
+
+  // Detiene el seguimiento continuo iniciado con startWatching
+  async stopWatching(): Promise<void> {
+    if (this.watchId !== null) {
+      await Geolocation.clearWatch({ id: this.watchId });
+      this.watchId = null;
+    }
   }
 }

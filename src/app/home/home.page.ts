@@ -1,11 +1,11 @@
-import { Component, AfterViewInit, signal } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
   IonContent, IonProgressBar,
   IonCard, IonList, IonListHeader,
-  IonItem, IonLabel, IonIcon, IonBadge, ToastController
+  IonItem, IonLabel, IonIcon, IonBadge, IonToggle, ToastController
 } from '@ionic/angular';
 import { GeoService, Coordinates } from '../services/geo';
 import { PlacesService, Place } from '../services/places';
@@ -43,13 +43,14 @@ L.Icon.Default.mergeOptions({
     IonHeader, IonToolbar, IonTitle, IonButtons, IonButton,
     IonContent, IonProgressBar,
     IonCard, IonList, IonListHeader,
-    IonItem, IonLabel, IonIcon, IonBadge
+    IonItem, IonLabel, IonIcon, IonBadge, IonToggle
   ]
 })
-export class HomePage implements AfterViewInit {
+export class HomePage implements AfterViewInit, OnDestroy {
   coords = signal<Coordinates | null>(null);
   places = signal<Place[]>([]);
   isLoading = signal(false);
+  isTracking = signal(false);
   private map!: L.Map;
   private userMarker?: L.Marker;
   private placesLayer = L.layerGroup();
@@ -63,6 +64,10 @@ export class HomePage implements AfterViewInit {
 
   ngAfterViewInit() {
     this.initMap();
+  }
+
+  ngOnDestroy() {
+    this.geoService.stopWatching();
   }
 
   // Inicializa Leaflet centrado provisionalmente
@@ -114,13 +119,41 @@ export class HomePage implements AfterViewInit {
     }
   }
 
-  private updateUserMapPosition(lat: number, lng: number) {
-    this.map.setView([lat, lng], 15);
+  private updateUserMapPosition(lat: number, lng: number, recenter = true) {
+    if (recenter) {
+      this.map.setView([lat, lng], 15);
+    }
 
     if (this.userMarker) {
       this.userMarker.setLatLng([lat, lng]);
     } else {
       this.userMarker = L.marker([lat, lng]).addTo(this.map).bindPopup('<b>Tu ubicación actual</b>').openPopup();
+    }
+  }
+
+  // Activa o detiene el seguimiento continuo de la ubicación (tiempo real)
+  async toggleTracking() {
+    if (this.isTracking()) {
+      await this.geoService.stopWatching();
+      this.isTracking.set(false);
+      this.showToast('Seguimiento en vivo detenido', 'medium');
+      return;
+    }
+
+    this.isTracking.set(true);
+    await this.geoService.startWatching(
+      (coords) => {
+        this.coords.set(coords);
+        this.updateUserMapPosition(coords.lat, coords.lng, false);
+      },
+      (message) => {
+        this.isTracking.set(false);
+        this.showToast(message, 'danger');
+      }
+    );
+
+    if (this.isTracking()) {
+      this.showToast('Seguimiento en vivo activado', 'success');
     }
   }
 
@@ -135,15 +168,19 @@ export class HomePage implements AfterViewInit {
       const places = await this.placesService.getNearbyPlaces(coords.lat, coords.lng);
       this.places.set(places);
 
-      places.forEach(p => {
-        L.marker([p.lat, p.lng])
-          .bindPopup(`<b>${p.name}</b><br>${p.type}`)
-          .addTo(this.placesLayer);
-      });
-
-      this.showToast(`Se encontraron ${places.length} sitios de interés.`, 'primary');
-    } catch (error) {
-      this.showToast('Error al buscar sitios cercanos', 'danger');
+      if (places.length === 0) {
+        this.showToast('No se encontraron sitios cercanos en esta zona.', 'medium');
+      } else {
+        places.forEach(p => {
+          L.marker([p.lat, p.lng])
+            .bindPopup(`<b>${p.name}</b><br>${p.type}`)
+            .addTo(this.placesLayer);
+        });
+        this.showToast(`Se encontraron ${places.length} sitios de interés.`, 'primary');
+      }
+    } catch (error: any) {
+      this.places.set([]);
+      this.showToast(error.message || 'Error al buscar sitios cercanos', 'danger');
     } finally {
       this.isLoading.set(false);
     }

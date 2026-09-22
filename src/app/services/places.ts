@@ -26,24 +26,28 @@ export class PlacesService {
       out body 15;
     `;
 
+    let response: Response;
     try {
-      const response = await fetch(`${this.OVERPASS_API}?data=${encodeURIComponent(query)}`);
-      if (!response.ok) throw new Error('Error al consultar lugares cercanos');
-      
-      const data = await response.json();
-      
-      return (data.elements || [])
-        .filter((el: any) => el.tags && el.tags.name)
-        .map((el: any) => ({
-          id: el.id,
-          name: el.tags.name,
-          type: el.tags.amenity || el.tags.shop || el.tags.tourism || 'Lugar de interés',
-          lat: el.lat,
-          lng: el.lon
-        }));
+      response = await fetch(`${this.OVERPASS_API}?data=${encodeURIComponent(query)}`);
     } catch (error) {
-      console.error('Error en PlacesService:', error);
-      return [];
+      console.error('Error de red en PlacesService:', error);
+      throw new Error('No se pudo conectar. Verifica tu conexión a internet e inténtalo de nuevo.');
     }
+
+    if (!response.ok) {
+      throw new Error('El servicio de lugares cercanos no respondió correctamente. Inténtalo más tarde.');
+    }
+
+    const data = await response.json();
+
+    return (data.elements || [])
+      .filter((el: any) => el.tags && el.tags.name)
+      .map((el: any) => ({
+        id: el.id,
+        name: el.tags.name,
+        type: el.tags.amenity || el.tags.shop || el.tags.tourism || 'Lugar de interés',
+        lat: el.lat,
+        lng: el.lon
+      }));
   }
 }
