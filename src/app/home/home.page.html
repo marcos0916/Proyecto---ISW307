@@ -1,35 +1,82 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Offline Sync App</ion-title>
-    <ion-badge
-      slot="end"
-      [color]="(isOnline$ | async) ? 'success' : 'danger'"
-      style="margin-right: 15px; padding: 6px 12px; font-size: 0.85rem;"
-    >
-      {{ (isOnline$ | async) ? 'En línea' : 'Sin conexión' }}
-    </ion-badge>
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="navigate-outline" class="title-icon"></ion-icon>
+      GPS &amp; Lugares Cercanos
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="shareLocation()" [disabled]="!coords()">
+        <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
+  <ion-progress-bar type="indeterminate" *ngIf="isLoading()"></ion-progress-bar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-item lines="none" style="border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px;">
-    <ion-input
-      placeholder="Escribe una tarea o nota..."
-      [(ngModel)]="newItemTitle"
-      (keyup.enter)="saveItem()"
-    ></ion-input>
-    <ion-button slot="end" (click)="saveItem()">Guardar</ion-button>
-  </ion-item>
+<ion-content [fullscreen]="true">
+  <div class="page">
+    <!-- Botones principales -->
+    <div class="actions-row">
+      <ion-button expand="block" class="action-btn" (click)="loadCurrentLocation()" [disabled]="isLoading()">
+        <ion-icon slot="start" name="locate-outline"></ion-icon>
+        Ubicarme
+      </ion-button>
+      <ion-button expand="block" class="action-btn" color="secondary" (click)="searchNearby()" [disabled]="!coords() || isLoading()">
+        <ion-icon slot="start" name="search-outline"></ion-icon>
+        Buscar Sitios
+      </ion-button>
+    </div>
 
-  <ion-list>
-    <ion-item *ngFor="let item of (items$ | async)">
-      <ion-label>
-        <h2>{{ item.title }}</h2>
-        <p>{{ item.createdAt | date:'short' }}</p>
-      </ion-label>
-      <ion-badge slot="end" [color]="item.synced ? 'success' : 'warning'">
-        {{ item.synced ? 'Sincronizado' : 'Pendiente' }}
-      </ion-badge>
-    </ion-item>
-  </ion-list>
+    <!-- Datos de coordenadas -->
+    <ion-card class="coords-card" *ngIf="coords() as c">
+      <div class="stat">
+        <ion-icon name="locate-outline"></ion-icon>
+        <div class="stat-text">
+          <span class="stat-label">Latitud</span>
+          <span class="stat-value">{{ c.lat | number:'1.5-5' }}</span>
+        </div>
+      </div>
+      <div class="stat">
+        <ion-icon name="navigate-outline"></ion-icon>
+        <div class="stat-text">
+          <span class="stat-label">Longitud</span>
+          <span class="stat-value">{{ c.lng | number:'1.5-5' }}</span>
+        </div>
+      </div>
+      <div class="stat">
+        <ion-icon name="radio-outline"></ion-icon>
+        <div class="stat-text">
+          <span class="stat-label">Precisión</span>
+          <span class="stat-value">±{{ c.accuracy | number:'1.1-1' }} m</span>
+        </div>
+      </div>
+    </ion-card>
+
+    <!-- Estado inicial: aún no se ha capturado la ubicación -->
+    <ion-card class="empty-card" *ngIf="!coords()">
+      <ion-icon name="map-outline"></ion-icon>
+      <p>Presiona <strong>Ubicarme</strong> para capturar tu posición GPS y descubrir sitios cercanos.</p>
+    </ion-card>
+
+    <!-- Contenedor del Mapa Leaflet -->
+    <div class="map-card">
+      <div id="map"></div>
+    </div>
+
+    <!-- Listado de lugares cercanos -->
+    <ion-list *ngIf="places().length > 0" class="places-list" inset="true">
+      <ion-list-header>
+        <ion-label>Lugares Cercanos</ion-label>
+        <ion-badge color="primary">{{ places().length }}</ion-badge>
+      </ion-list-header>
+
+      <ion-item *ngFor="let place of places()" button detail="true" (click)="focusOnMap(place.lat, place.lng)">
+        <ion-icon [name]="iconFor(place.type)" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h2>{{ place.name }}</h2>
+          <p>{{ place.type | uppercase }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </div>
 </ion-content>
