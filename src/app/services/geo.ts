@@ -12,19 +12,33 @@ export interface Coordinates {
 })
 export class GeoService {
 
-  //Aqui Comprueba y solicita permisos nativos de ubicación
+  //Aqui Comprueba y, si aplica, solicita permisos nativos de ubicación.
+  // En la web no existe un paso de solicitud independiente: el propio
+  // navigator.geolocation.getCurrentPosition() dispara el diálogo nativo,
+  // así que solo bloqueamos aquí cuando el permiso ya fue denegado antes.
   async checkAndRequestPermissions(): Promise<boolean> {
     try {
-      let status: PermissionStatus = await Geolocation.checkPermissions();
+      const status: PermissionStatus = await Geolocation.checkPermissions();
+
+      if (status.location === 'denied') {
+        return false;
+      }
 
       if (status.location === 'prompt' || status.location === 'prompt-with-rationale') {
-        status = await Geolocation.requestPermissions();
+        try {
+          const requested = await Geolocation.requestPermissions();
+          return requested.location === 'granted';
+        } catch {
+          // Geolocation.requestPermissions() no está implementado en la web;
+          // dejamos que getCurrentPosition() dispare el diálogo del navegador.
+          return true;
+        }
       }
 
       return status.location === 'granted';
     } catch (error) {
-      console.error('Error al solicitar permisos:', error);
-      return false;
+      console.error('Error al comprobar permisos:', error);
+      return true;
     }
   }
 
@@ -49,7 +63,7 @@ export class GeoService {
       };
     } catch (error) {
       console.error('Error al capturar coordenadas:', error);
-      return null;
+      throw new Error('No se pudo obtener tu ubicación. Verifica que aceptaste el permiso y que el GPS esté activo.');
     }
   }
 
