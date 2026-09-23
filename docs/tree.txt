@@ -1,0 +1,92 @@
+.
+├── .browserslistrc
+├── .editorconfig
+├── .gitignore
+├── .vscode
+│   ├── extensions.json
+│   └── settings.json
+├── angular.json
+├── capacitor.config.ts
+├── docs
+│   └── tree.txt
+├── eslint.config.js
+├── ionic-location-services-app
+│   ├── README.md
+│   ├── ionic.config.json
+│   ├── package.json
+│   ├── src
+│   │   ├── app
+│   │   │   ├── app.module.ts
+│   │   │   ├── home
+│   │   │   │   ├── home.page.html
+│   │   │   │   ├── home.page.scss
+│   │   │   │   └── home.page.ts
+│   │   │   └── services
+│   │   │       └── location.service.ts
+│   │   ├── assets
+│   │   │   └── data
+│   │   │       └── locations.json
+│   │   ├── environments
+│   │   │   └── environment.ts
+│   │   ├── global.scss
+│   │   └── main.ts
+│   └── tsconfig.json
+├── ionic.config.json
+├── package-lock.json
+├── package.json
+├── src
+│   ├── app
+│   │   ├── app.component.html
+│   │   ├── app.component.scss
+│   │   ├── app.component.spec.ts
+│   │   ├── app.component.ts
+│   │   ├── app.routes.ts
+│   │   ├── home
+│   │   │   ├── home.page.html
+│   │   │   ├── home.page.scss
+│   │   │   ├── home.page.spec.ts
+│   │   │   └── home.page.ts
+│   │   └── services
+│   │       ├── data.spec.ts
+│   │       ├── data.ts
+│   │       ├── network.spec.ts
+│   │       └── network.ts
+│   ├── assets
+│   │   ├── icon
+│   │   │   └── favicon.png
+│   │   └── shapes.svg
+│   ├── environments
+│   │   ├── environment.prod.ts
+│   │   └── environment.ts
+│   ├── global.scss
+│   ├── index.html
+│   ├── ionic-location-services-app
+│   │   ├── README.md
+│   │   ├── ionic.config.json
+│   │   ├── package.json
+│   │   ├── src
+│   │   │   ├── app
+│   │   │   │   ├── app.module.ts
+│   │   │   │   ├── home
+│   │   │   │   │   ├── home.page.html
+│   │   │   │   │   ├── home.page.scss
+│   │   │   │   │   └── home.page.ts
+│   │   │   │   └── services
+│   │   │   │       └── location.service.ts
+│   │   │   ├── assets
+│   │   │   │   └── data
+│   │   │   │       └── locations.json
+│   │   │   ├── environments
+│   │   │   │   └── environment.ts
+│   │   │   ├── global.scss
+│   │   │   └── main.ts
+│   │   └── tsconfig.json
+│   ├── main.ts
+│   ├── test-setup.ts
+│   └── theme
+│       └── variables.scss
+├── tsconfig.app.json
+├── tsconfig.json
+└── tsconfig.spec.json
+
+27 directories, 63 files

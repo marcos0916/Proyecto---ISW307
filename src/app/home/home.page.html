@@ -1,35 +1,41 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>Offline Sync App</ion-title>
-    <ion-badge
-      slot="end"
-      [color]="(isOnline$ | async) ? 'success' : 'danger'"
-      style="margin-right: 15px; padding: 6px 12px; font-size: 0.85rem;"
-    >
-      {{ (isOnline$ | async) ? 'En línea' : 'Sin conexión' }}
-    </ion-badge>
+    <ion-title>Servicios de Localización</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding">
-  <ion-item lines="none" style="border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px;">
-    <ion-input
-      placeholder="Escribe una tarea o nota..."
-      [(ngModel)]="newItemTitle"
-      (keyup.enter)="saveItem()"
-    ></ion-input>
-    <ion-button slot="end" (click)="saveItem()">Guardar</ion-button>
-  </ion-item>
+<ion-content class="ion-padding">
+  <ion-button expand="block" (click)="locateMe()">Mi ubicación</ion-button>
+  <ion-button expand="block" color="success" (click)="startTracking()" [disabled]="isTracking">
+    Iniciar tiempo real
+  </ion-button>
+  <ion-button expand="block" color="medium" (click)="stopTracking()" [disabled]="!isTracking">
+    Detener tiempo real
+  </ion-button>
 
-  <ion-list>
-    <ion-item *ngFor="let item of (items$ | async)">
-      <ion-label>
-        <h2>{{ item.title }}</h2>
-        <p>{{ item.createdAt | date:'short' }}</p>
-      </ion-label>
-      <ion-badge slot="end" [color]="item.synced ? 'success' : 'warning'">
-        {{ item.synced ? 'Sincronizado' : 'Pendiente' }}
-      </ion-badge>
-    </ion-item>
-  </ion-list>
+  <div id="map"></div>
+
+  <ion-text *ngIf="coordsText">
+    <p>{{ coordsText }}</p>
+  </ion-text>
+
+  <div class="notes-section">
+    <div class="note-input">
+      <input
+        type="text"
+        placeholder="Escribe una tarea o nota..."
+        [(ngModel)]="noteText"
+        (keyup.enter)="saveNote()"
+      />
+      <ion-button (click)="saveNote()">GUARDAR</ion-button>
+    </div>
+
+    <div class="note-item" *ngFor="let note of notes">
+      <div class="note-content">
+        <span class="note-text">{{ note.text }}</span>
+        <span class="note-date">{{ note.date | date: 'dd/MM/yy, h:mm a' }}</span>
+      </div>
+      <span class="note-status">Sincronizado</span>
+    </div>
+  </div>
 </ion-content>
