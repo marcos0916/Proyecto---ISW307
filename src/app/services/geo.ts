@@ -13,10 +13,7 @@ export interface Coordinates {
 export class GeoService {
   private watchId: string | null = null;
 
-  //Aqui Comprueba y, si aplica, solicita permisos nativos de ubicación.
-  // En la web no existe un paso de solicitud independiente: el propio
-  // navigator.geolocation.getCurrentPosition() dispara el diálogo nativo,
-  // así que solo bloqueamos aquí cuando el permiso ya fue denegado antes.
+ 
   async checkAndRequestPermissions(): Promise<boolean> {
     try {
       const status: PermissionStatus = await Geolocation.checkPermissions();
@@ -30,8 +27,7 @@ export class GeoService {
           const requested = await Geolocation.requestPermissions();
           return requested.location === 'granted';
         } catch {
-          // Geolocation.requestPermissions() no está implementado en la web;
-          // dejamos que getCurrentPosition() dispare el diálogo del navegador.
+        
           return true;
         }
       }
@@ -92,9 +88,7 @@ export class GeoService {
           });
           return;
         }
-        // code 1 = PERMISSION_DENIED (revocado en caliente): ahí sí detenemos.
-        // El resto (señal débil, timeout puntual) es normal en un watch continuo;
-        // el navegador sigue intentando por su cuenta.
+        // 
         if (err?.code === 1) {
           onError('Se revocó el permiso de ubicación.');
         }

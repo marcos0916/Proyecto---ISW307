@@ -17,15 +17,12 @@ import {
   bedOutline, cameraOutline, locationOutline, storefrontOutline
 } from 'ionicons/icons';
 
-// @ionic/angular ya no resuelve los íconos por nombre automáticamente:
-// hay que registrarlos explícitamente con addIcons.
 addIcons({
   navigateOutline, shareSocialOutline, locateOutline, searchOutline,
   radioOutline, mapOutline, restaurantOutline, cafeOutline, beerOutline,
   bedOutline, cameraOutline, locationOutline, storefrontOutline
 });
 
-// Los íconos por defecto de Leaflet no se resuelven correctamente con el bundler de Angular
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
@@ -81,8 +78,7 @@ export class HomePage implements AfterViewInit, OnDestroy {
 
     this.placesLayer.addTo(this.map);
 
-    // Ionic anima la entrada de la página, así que el contenedor no tiene su
-    // tamaño final todavía cuando Leaflet mide el div por primera vez.
+    
     const mapContainer = document.getElementById('map');
     if (mapContainer) {
       new ResizeObserver(() => this.map.invalidateSize()).observe(mapContainer);
@@ -206,7 +202,6 @@ export class HomePage implements AfterViewInit, OnDestroy {
         console.log('Compartir cancelado');
       }
     } else {
-      // Fallback: copiar al portapapeles
       await navigator.clipboard.writeText(url);
       this.showToast('Enlace de ubicación copiado al portapapeles', 'medium');
     }

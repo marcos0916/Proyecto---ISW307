@@ -15,7 +15,7 @@ export class PlacesService {
   private readonly OVERPASS_API = 'https://overpass-api.de/api/interpreter';
 
   async getNearbyPlaces(lat: number, lng: number, radiusMeters: number = 1000): Promise<Place[]> {
-    // Consulta en lenguaje Overpass QL buscando nodos de tipo amenity (restaurantes, cafés), tiendas o turismo
+    // Acá consulta  en lenguaje Overpass QL buscando nodos de tipo amenity (restaurantes, cafés), tiendas o turismo
     const query = `
       [out:json][timeout:15];
       (
