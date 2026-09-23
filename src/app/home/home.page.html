@@ -15,7 +15,6 @@
 
 <ion-content [fullscreen]="true">
   <div class="page">
-    <!-- Botones principales -->
     <div class="actions-row">
       <ion-button expand="block" class="action-btn" (click)="loadCurrentLocation()" [disabled]="isLoading()">
         <ion-icon slot="start" name="locate-outline"></ion-icon>
@@ -27,7 +26,6 @@
       </ion-button>
     </div>
 
-    <!-- Datos de coordenadas -->
     <ion-card class="coords-card" *ngIf="coords() as c">
       <div class="stats-row">
         <div class="stat">
@@ -60,19 +58,16 @@
       </ion-item>
     </ion-card>
 
-    <!-- Estado inicial: aún no se ha capturado la ubicación -->
     <ion-card class="empty-card" *ngIf="!coords()">
       <ion-icon name="map-outline"></ion-icon>
       <p>Presiona <strong>Ubicarme</strong> para capturar tu posición GPS y descubrir sitios cercanos.</p>
     </ion-card>
 
-    <!-- Contenedor del Mapa Leaflet -->
     <div class="map-card">
       <div id="map"></div>
     </div>
 
-    <!-- Listado de lugares cercanos -->
-    <ion-list *ngIf="places().length > 0" class="places-list" inset="true">
+¿    <ion-list *ngIf="places().length > 0" class="places-list" inset="true">
       <ion-list-header>
         <ion-label>Lugares Cercanos</ion-label>
         <ion-badge color="primary">{{ places().length }}</ion-badge>
