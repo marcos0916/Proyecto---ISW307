@@ -5,12 +5,17 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
   IonItemSliding, IonItemOptions, IonItemOption, IonLabel, IonBadge,
   IonSearchbar, IonRefresher, IonRefresherContent, IonFab, IonFabButton,
-  IonIcon, IonCheckbox, ToastController, AlertController
+  IonIcon, IonProgressBar, ToastController, ModalController
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { trashOutline, addOutline, checkmarkCircleOutline } from 'ionicons/icons';
+import {
+  trashOutline, addOutline, checkmarkCircle, ellipseOutline,
+  flag, clipboardOutline, searchOutline, timeOutline,
+  checkmarkDoneCircleOutline
+} from 'ionicons/icons';
 import { DatabaseService } from '../../services/database';
 import { Tarea } from '../../models/tarea.model';
+import { NuevaTareaModalComponent, NuevaTareaResult } from './nueva-tarea-modal.component';
 
 @Component({
   selector: 'app-tareas',
@@ -22,7 +27,7 @@ import { Tarea } from '../../models/tarea.model';
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
     IonItemSliding, IonItemOptions, IonItemOption, IonLabel, IonBadge,
     IonSearchbar, IonRefresher, IonRefresherContent, IonFab, IonFabButton,
-    IonIcon, IonCheckbox
+    IonIcon, IonProgressBar
   ]
 })
 export class TareasPage implements OnInit {
@@ -33,9 +38,29 @@ export class TareasPage implements OnInit {
   constructor(
     private dbService: DatabaseService,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private modalCtrl: ModalController
   ) {
-    addIcons({ trashOutline, addOutline, checkmarkCircleOutline });
+    addIcons({
+      trashOutline, addOutline, checkmarkCircle, ellipseOutline,
+      flag, clipboardOutline, searchOutline, timeOutline,
+      checkmarkDoneCircleOutline
+    });
+  }
+
+  get totalTareas(): number {
+    return this.tareas.length;
+  }
+
+  get completadasCount(): number {
+    return this.tareas.filter(t => t.completada === 1).length;
+  }
+
+  get progreso(): number {
+    return this.totalTareas === 0 ? 0 : this.completadasCount / this.totalTareas;
+  }
+
+  colorPrioridad(prioridad: Tarea['prioridad']): string {
+    return prioridad === 'alta' ? 'danger' : prioridad === 'media' ? 'warning' : 'success';
   }
 
   async ngOnInit() {
@@ -89,36 +114,29 @@ export class TareasPage implements OnInit {
   }
 
   async abrirModalNuevaTarea() {
-    const alert = await this.alertCtrl.create({
-      header: 'Nueva Tarea',
-      inputs: [
-        { name: 'titulo', type: 'text', placeholder: 'Título de la tarea' },
-        { name: 'descripcion', type: 'textarea', placeholder: 'Descripción (opcional)' }
-      ],
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Guardar',
-          handler: async (data: { titulo: string; descripcion?: string }) => {
-            if (data.titulo && data.titulo.trim() !== '') {
-              await this.dbService.addTarea({
-                titulo: data.titulo.trim(),
-                descripcion: data.descripcion?.trim() || '',
-                prioridad: 'media',
-                completada: 0
-              });
-              await this.cargarTareas();
-              const toast = await this.toastCtrl.create({
-                message: 'Tarea guardada',
-                duration: 2000,
-                color: 'success'
-              });
-              toast.present();
-            }
-          }
-        }
-      ]
+    const modal = await this.modalCtrl.create({
+      component: NuevaTareaModalComponent,
+      breakpoints: [0, 0.6],
+      initialBreakpoint: 0.6
     });
-    await alert.present();
+    await modal.present();
+
+    const { data, role } = await modal.onDidDismiss<NuevaTareaResult>();
+    if (role !== 'confirm' || !data) return;
+
+    await this.dbService.addTarea({
+      titulo: data.titulo,
+      descripcion: data.descripcion,
+      prioridad: data.prioridad,
+      completada: 0
+    });
+    await this.cargarTareas();
+
+    const toast = await this.toastCtrl.create({
+      message: 'Tarea guardada',
+      duration: 2000,
+      color: 'success'
+    });
+    toast.present();
   }
 }

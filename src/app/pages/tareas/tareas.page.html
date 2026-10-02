@@ -1,29 +1,59 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>Gestor de Tareas</ion-title>
+<ion-header class="ion-no-border tareas-header">
+  <ion-toolbar class="header-toolbar">
+    <ion-title>
+      <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+      <span>Gestor de Tareas</span>
+    </ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary">
-    <ion-searchbar [(ngModel)]="busqueda" (ionInput)="filtrar()" placeholder="Buscar tarea..."></ion-searchbar>
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar
+      [(ngModel)]="busqueda"
+      (ionInput)="filtrar()"
+      placeholder="Buscar tarea..."
+      [debounce]="250"
+      mode="ios">
+    </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <!-- Pull to refresh -->
+<ion-content class="tareas-content">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content pullingText="Desliza para actualizar..." refreshingSpinner="circles">
     </ion-refresher-content>
   </ion-refresher>
 
-  <ion-list>
-    <!-- Item sliding para Swipe Delete -->
-    <ion-item-sliding *ngFor="let t of tareasFiltradas" #slidingItem>
-      <ion-item>
-        <ion-checkbox slot="start" [checked]="t.completada === 1" (ionChange)="toggleCompletada(t)"></ion-checkbox>
-        <ion-label [class.completada]="t.completada === 1">
+  <!-- Resumen de progreso -->
+  <div class="progreso-card" *ngIf="totalTareas > 0">
+    <div class="progreso-info">
+      <span class="progreso-label">{{ completadasCount }} de {{ totalTareas }} completadas</span>
+      <span class="progreso-pct">{{ progreso * 100 | number:'1.0-0' }}%</span>
+    </div>
+    <ion-progress-bar [value]="progreso" color="success"></ion-progress-bar>
+  </div>
+
+  <!-- Lista de tareas -->
+  <ion-list class="tareas-list" *ngIf="tareasFiltradas.length > 0">
+    <ion-item-sliding *ngFor="let t of tareasFiltradas" #slidingItem class="tarea-sliding">
+      <ion-item class="tarea-card" lines="none" [class.completada]="t.completada === 1">
+        <ion-icon
+          slot="start"
+          class="check-icon"
+          [color]="t.completada === 1 ? 'success' : 'medium'"
+          [name]="t.completada === 1 ? 'checkmark-circle' : 'ellipse-outline'"
+          (click)="toggleCompletada(t)">
+        </ion-icon>
+
+        <ion-label class="tarea-label">
           <h2>{{ t.titulo }}</h2>
           <p *ngIf="t.descripcion">{{ t.descripcion }}</p>
+          <p class="tarea-fecha" *ngIf="t.fechaCreacion">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ t.fechaCreacion | date:'d MMM, h:mm a' }}
+          </p>
         </ion-label>
-        <ion-badge slot="end" [color]="t.prioridad === 'alta' ? 'danger' : t.prioridad === 'media' ? 'warning' : 'medium'">
+
+        <ion-badge slot="end" [color]="colorPrioridad(t.prioridad)" class="prioridad-badge">
+          <ion-icon name="flag"></ion-icon>
           {{ t.prioridad }}
         </ion-badge>
       </ion-item>
@@ -36,7 +66,20 @@
     </ion-item-sliding>
   </ion-list>
 
-  <!-- Botón flotante para agregar tarea -->
+  <!-- Estado vacío: sin tareas -->
+  <div class="estado-vacio" *ngIf="totalTareas === 0">
+    <ion-icon name="clipboard-outline"></ion-icon>
+    <h3>No tienes tareas todavía</h3>
+    <p>Toca el botón + para agregar tu primera tarea</p>
+  </div>
+
+  <!-- Estado vacío: sin resultados de búsqueda -->
+  <div class="estado-vacio" *ngIf="totalTareas > 0 && tareasFiltradas.length === 0">
+    <ion-icon name="search-outline"></ion-icon>
+    <h3>Sin resultados</h3>
+    <p>No hay tareas que coincidan con "{{ busqueda }}"</p>
+  </div>
+
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="abrirModalNuevaTarea()">
       <ion-icon name="add-outline"></ion-icon>
