@@ -115,9 +115,7 @@ export class TareasPage implements OnInit {
 
   async abrirModalNuevaTarea() {
     const modal = await this.modalCtrl.create({
-      component: NuevaTareaModalComponent,
-      breakpoints: [0, 0.6],
-      initialBreakpoint: 0.6
+      component: NuevaTareaModalComponent
     });
     await modal.present();
 
