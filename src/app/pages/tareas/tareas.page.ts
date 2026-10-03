@@ -4,13 +4,14 @@ import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
   IonItemSliding, IonItemOptions, IonItemOption, IonLabel, IonBadge,
   IonSearchbar, IonRefresher, IonRefresherContent, IonFab, IonFabButton,
-  IonIcon, IonProgressBar, ToastController, ModalController
+  IonIcon, IonProgressBar, IonReorderGroup, IonReorder, ToastController, ModalController,
+  ReorderEndCustomEvent
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
 import {
   trashOutline, addOutline, checkmarkCircle, ellipseOutline,
   flag, clipboardOutline, searchOutline, timeOutline,
-  checkmarkDoneCircleOutline, createOutline
+  checkmarkDoneCircleOutline, createOutline, reorderThreeOutline
 } from 'ionicons/icons';
 import { DatabaseService } from '../../services/database';
 import { Tarea } from '../../models/tarea.model';
@@ -27,7 +28,7 @@ import { LongPressDirective } from '../../directives/long-press.directive';
     IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem,
     IonItemSliding, IonItemOptions, IonItemOption, IonLabel, IonBadge,
     IonSearchbar, IonRefresher, IonRefresherContent, IonFab, IonFabButton,
-    IonIcon, IonProgressBar, LongPressDirective
+    IonIcon, IonProgressBar, IonReorderGroup, IonReorder, LongPressDirective
   ]
 })
 export class TareasPage implements OnInit {
@@ -59,7 +60,7 @@ export class TareasPage implements OnInit {
     addIcons({
       trashOutline, addOutline, checkmarkCircle, ellipseOutline,
       flag, clipboardOutline, searchOutline, timeOutline,
-      checkmarkDoneCircleOutline, createOutline
+      checkmarkDoneCircleOutline, createOutline, reorderThreeOutline
     });
   }
 
@@ -111,6 +112,19 @@ export class TareasPage implements OnInit {
   async editar(tarea: Tarea, slidingItem?: any) {
     await slidingItem?.close();
     await this.abrirModalTarea(tarea);
+  }
+
+  /**
+   * Solo se puede arrastrar cuando no hay búsqueda activa (el reorder-group se deshabilita
+   * en ese caso desde el template), así los índices del evento siempre corresponden
+   * a la lista completa sin filtrar.
+   */
+  async onReorder(event: ReorderEndCustomEvent) {
+    const reordenada = event.detail.complete(this.tareas()) as Tarea[];
+    this.tareas.set(reordenada);
+
+    const ids = reordenada.map(t => t.id).filter((id): id is number => id != null);
+    await this.dbService.reordenarTareas(ids);
   }
 
   async abrirModalNuevaTarea() {

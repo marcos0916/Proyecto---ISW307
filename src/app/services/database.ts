@@ -9,8 +9,8 @@ import { Tarea } from '../models/tarea.model';
 export class DatabaseService {
   private sqlite: SQLiteConnection;
   private db!: SQLiteDBConnection;
-  private isNative: boolean = false;
-  private dbName: string = 'campusapp_db';
+  private isNative: boolean;
+  private dbName = 'campusapp_db';
 
   constructor() {
     this.sqlite = new SQLiteConnection(CapacitorSQLite);
@@ -18,101 +18,105 @@ export class DatabaseService {
   }
 
   async initDatabase(): Promise<void> {
-    if (this.isNative) {
-      try {
-        const ret = await this.sqlite.checkConnectionsConsistency();
-        const isConn = (await this.sqlite.isConnection(this.dbName, false)).result;
+    if (!this.isNative) {
+      await this.esperarJeepSqlite();
+      await this.sqlite.initWebStore();
+    }
 
-        if (ret.result && isConn) {
-          this.db = await this.sqlite.retrieveConnection(this.dbName, false);
-        } else {
-          this.db = await this.sqlite.createConnection(this.dbName, false, 'no-encryption', 1, false);
-        }
+    const ret = await this.sqlite.checkConnectionsConsistency();
+    const isConn = (await this.sqlite.isConnection(this.dbName, false)).result;
 
-        await this.db.open();
+    this.db = ret.result && isConn
+      ? await this.sqlite.retrieveConnection(this.dbName, false)
+      : await this.sqlite.createConnection(this.dbName, false, 'no-encryption', 1, false);
 
-        const schema = `
-          CREATE TABLE IF NOT EXISTS tareas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT NOT NULL,
-            descripcion TEXT,
-            prioridad TEXT DEFAULT 'media',
-            completada INTEGER DEFAULT 0,
-            fechaCreacion TEXT
-          );
-        `;
-        await this.db.execute(schema);
-      } catch (err) {
-        console.error('Error inicializando SQLite nativo:', err);
-      }
-    } else {
-      if (!localStorage.getItem('tareas_mock')) {
-        const initialData: Tarea[] = [
-          { id: 1, titulo: 'Entrega Proyecto Final', descripcion: 'Completar módulos de Ionic', prioridad: 'alta', completada: 0, fechaCreacion: new Date().toISOString() },
-          { id: 2, titulo: 'Estudiar Unidad 9', descripcion: 'Repasar persistencia con SQLite', prioridad: 'media', completada: 1, fechaCreacion: new Date().toISOString() }
-        ];
-        localStorage.setItem('tareas_mock', JSON.stringify(initialData));
-      }
+    await this.db.open();
+
+    await this.db.execute(`
+      CREATE TABLE IF NOT EXISTS tareas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        titulo TEXT NOT NULL,
+        descripcion TEXT,
+        prioridad TEXT DEFAULT 'media',
+        completada INTEGER DEFAULT 0,
+        orden INTEGER,
+        fechaCreacion TEXT
+      );
+    `);
+
+    // Migración liviana: bases creadas con una versión anterior del esquema no tienen
+    // la columna "orden". Se verifica con PRAGMA en vez de probar/capturar el ALTER,
+    // porque el puente web de Capacitor no siempre propaga ese rechazo de forma limpia.
+    const columnas = await this.db.query('PRAGMA table_info(tareas);');
+    const tieneOrden = (columnas.values || []).some((c: { name: string }) => c.name === 'orden');
+    if (!tieneOrden) {
+      await this.db.execute('ALTER TABLE tareas ADD COLUMN orden INTEGER;');
+    }
+
+    // Tareas existentes sin "orden" asignado quedan ordenadas por id de creación.
+    await this.db.run('UPDATE tareas SET orden = id WHERE orden IS NULL;');
+
+    await this.sembrarDatosIniciales();
+  }
+
+  /** Primera ejecución con la tabla vacía: deja un par de tareas de ejemplo. */
+  private async sembrarDatosIniciales(): Promise<void> {
+    const conteo = await this.db.query('SELECT COUNT(*) AS total FROM tareas;');
+    if ((conteo.values?.[0]?.total ?? 0) > 0) return;
+
+    const fecha = new Date().toISOString();
+    await this.db.run(
+      'INSERT INTO tareas (titulo, descripcion, prioridad, completada, orden, fechaCreacion) VALUES (?, ?, ?, ?, ?, ?);',
+      ['Entrega Proyecto Final', 'Completar módulos de Ionic', 'alta', 0, 1, fecha]
+    );
+    await this.db.run(
+      'INSERT INTO tareas (titulo, descripcion, prioridad, completada, orden, fechaCreacion) VALUES (?, ?, ?, ?, ?, ?);',
+      ['Estudiar Unidad 9', 'Repasar persistencia con SQLite', 'media', 1, 2, fecha]
+    );
+  }
+
+  /** jeep-sqlite tarda un instante en registrarse e inicializar su propio store en IndexedDB. */
+  private async esperarJeepSqlite(): Promise<void> {
+    await customElements.whenDefined('jeep-sqlite');
+    const jeepEl = document.querySelector('jeep-sqlite') as (HTMLElement & { componentOnReady?: () => Promise<unknown> }) | null;
+    if (jeepEl?.componentOnReady) {
+      await jeepEl.componentOnReady();
     }
   }
 
   async getTareas(): Promise<Tarea[]> {
-    if (this.isNative) {
-      const res = await this.db.query('SELECT * FROM tareas ORDER BY id DESC;');
-      return (res.values as Tarea[]) || [];
-    } else {
-      const data = localStorage.getItem('tareas_mock');
-      return data ? JSON.parse(data) : [];
-    }
+    const res = await this.db.query('SELECT * FROM tareas ORDER BY orden ASC, id DESC;');
+    return (res.values as Tarea[]) || [];
   }
 
   async addTarea(tarea: Omit<Tarea, 'id'>): Promise<void> {
     const fecha = new Date().toISOString();
-    if (this.isNative) {
-      const sql = 'INSERT INTO tareas (titulo, descripcion, prioridad, completada, fechaCreacion) VALUES (?, ?, ?, ?, ?);';
-      await this.db.run(sql, [tarea.titulo, tarea.descripcion || '', tarea.prioridad, 0, fecha]);
-    } else {
-      const tareas = await this.getTareas();
-      const nuevoId = tareas.length > 0 ? Math.max(...tareas.map(t => t.id || 0)) + 1 : 1;
-      tareas.unshift({ ...tarea, id: nuevoId, completada: 0, fechaCreacion: fecha });
-      localStorage.setItem('tareas_mock', JSON.stringify(tareas));
-    }
+    const maxOrdenRes = await this.db.query('SELECT MAX(orden) AS maxOrden FROM tareas;');
+    const siguienteOrden = (maxOrdenRes.values?.[0]?.maxOrden ?? 0) + 1;
+
+    const sql = 'INSERT INTO tareas (titulo, descripcion, prioridad, completada, orden, fechaCreacion) VALUES (?, ?, ?, ?, ?, ?);';
+    await this.db.run(sql, [tarea.titulo, tarea.descripcion || '', tarea.prioridad, 0, siguienteOrden, fecha]);
   }
 
   async updateTarea(id: number, cambios: Pick<Tarea, 'titulo' | 'descripcion' | 'prioridad'>): Promise<void> {
-    if (this.isNative) {
-      const sql = 'UPDATE tareas SET titulo = ?, descripcion = ?, prioridad = ? WHERE id = ?;';
-      await this.db.run(sql, [cambios.titulo, cambios.descripcion || '', cambios.prioridad, id]);
-    } else {
-      const tareas = await this.getTareas();
-      const idx = tareas.findIndex(t => t.id === id);
-      if (idx !== -1) {
-        tareas[idx] = { ...tareas[idx], ...cambios };
-        localStorage.setItem('tareas_mock', JSON.stringify(tareas));
-      }
-    }
+    const sql = 'UPDATE tareas SET titulo = ?, descripcion = ?, prioridad = ? WHERE id = ?;';
+    await this.db.run(sql, [cambios.titulo, cambios.descripcion || '', cambios.prioridad, id]);
   }
 
   async updateEstadoTarea(id: number, completada: number): Promise<void> {
-    if (this.isNative) {
-      await this.db.run('UPDATE tareas SET completada = ? WHERE id = ?;', [completada, id]);
-    } else {
-      const tareas = await this.getTareas();
-      const idx = tareas.findIndex(t => t.id === id);
-      if (idx !== -1) {
-        tareas[idx].completada = completada;
-        localStorage.setItem('tareas_mock', JSON.stringify(tareas));
-      }
-    }
+    await this.db.run('UPDATE tareas SET completada = ? WHERE id = ?;', [completada, id]);
   }
 
   async deleteTarea(id: number): Promise<void> {
-    if (this.isNative) {
-      await this.db.run('DELETE FROM tareas WHERE id = ?;', [id]);
-    } else {
-      let tareas = await this.getTareas();
-      tareas = tareas.filter(t => t.id !== id);
-      localStorage.setItem('tareas_mock', JSON.stringify(tareas));
-    }
+    await this.db.run('DELETE FROM tareas WHERE id = ?;', [id]);
+  }
+
+  /** Persiste el nuevo orden tras un drag & drop. `idsEnOrden` ya viene en el orden final deseado. */
+  async reordenarTareas(idsEnOrden: number[]): Promise<void> {
+    const statements = idsEnOrden.map((id, index) => ({
+      statement: 'UPDATE tareas SET orden = ? WHERE id = ?;',
+      values: [index, id]
+    }));
+    await this.db.executeSet(statements);
   }
 }

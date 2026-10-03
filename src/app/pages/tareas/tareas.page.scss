@@ -95,6 +95,25 @@
   padding: 4px 12px 96px;
 }
 
+.reorder-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 4px 10px;
+  font-size: 0.76rem;
+  color: var(--ion-color-medium, #92949c);
+  opacity: 0.8;
+
+  ion-icon {
+    font-size: 0.95rem;
+  }
+}
+
+ion-reorder {
+  color: var(--ion-color-medium, #92949c);
+  padding-inline-start: 6px;
+}
+
 .tarea-sliding {
   margin-bottom: 10px;
   border-radius: var(--radius);

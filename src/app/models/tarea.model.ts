@@ -4,5 +4,6 @@ export interface Tarea {
   descripcion?: string;
   prioridad: 'baja' | 'media' | 'alta';
   completada: number;
+  orden?: number;
   fechaCreacion?: string;
 }
