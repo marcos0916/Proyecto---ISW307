@@ -107,6 +107,13 @@
   --padding-start: 12px;
   --inner-padding-end: 12px;
   --min-height: 68px;
+  touch-action: pan-y;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+
+  &.is-pressing {
+    transform: scale(0.98);
+    opacity: 0.85;
+  }
   border-radius: var(--radius);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 

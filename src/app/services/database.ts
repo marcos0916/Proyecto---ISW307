@@ -79,6 +79,20 @@ export class DatabaseService {
     }
   }
 
+  async updateTarea(id: number, cambios: Pick<Tarea, 'titulo' | 'descripcion' | 'prioridad'>): Promise<void> {
+    if (this.isNative) {
+      const sql = 'UPDATE tareas SET titulo = ?, descripcion = ?, prioridad = ? WHERE id = ?;';
+      await this.db.run(sql, [cambios.titulo, cambios.descripcion || '', cambios.prioridad, id]);
+    } else {
+      const tareas = await this.getTareas();
+      const idx = tareas.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        tareas[idx] = { ...tareas[idx], ...cambios };
+        localStorage.setItem('tareas_mock', JSON.stringify(tareas));
+      }
+    }
+  }
+
   async updateEstadoTarea(id: number, completada: number): Promise<void> {
     if (this.isNative) {
       await this.db.run('UPDATE tareas SET completada = ? WHERE id = ?;', [completada, id]);

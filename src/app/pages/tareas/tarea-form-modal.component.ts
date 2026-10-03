@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -10,14 +10,15 @@ import { addIcons } from 'ionicons';
 import { closeOutline, flag } from 'ionicons/icons';
 import { Tarea } from '../../models/tarea.model';
 
-export interface NuevaTareaResult {
+export interface TareaFormResult {
+  id?: number;
   titulo: string;
   descripcion: string;
   prioridad: Tarea['prioridad'];
 }
 
 @Component({
-  selector: 'app-nueva-tarea-modal',
+  selector: 'app-tarea-form-modal',
   standalone: true,
   imports: [
     CommonModule, FormsModule,
@@ -27,7 +28,7 @@ export interface NuevaTareaResult {
   template: `
     <ion-header class="ion-no-border">
       <ion-toolbar class="modal-toolbar">
-        <ion-title>Nueva Tarea</ion-title>
+        <ion-title>{{ tarea ? 'Editar Tarea' : 'Nueva Tarea' }}</ion-title>
         <ion-buttons slot="end">
           <ion-button (click)="cancelar()">
             <ion-icon slot="icon-only" name="close-outline"></ion-icon>
@@ -86,7 +87,7 @@ export interface NuevaTareaResult {
 
     <ion-footer class="ion-no-border ion-padding">
       <ion-button expand="block" [disabled]="!titulo.trim()" (click)="guardar()">
-        Guardar tarea
+        {{ tarea ? 'Guardar cambios' : 'Guardar tarea' }}
       </ion-button>
     </ion-footer>
   `,
@@ -167,7 +168,10 @@ export interface NuevaTareaResult {
     }
   `]
 })
-export class NuevaTareaModalComponent {
+export class TareaFormModalComponent implements OnInit {
+  /** Cuando viene seteada, el modal entra en modo edición y precarga sus campos. */
+  @Input() tarea: Tarea | null = null;
+
   titulo = '';
   descripcion = '';
   prioridad: Tarea['prioridad'] = 'media';
@@ -176,13 +180,22 @@ export class NuevaTareaModalComponent {
     addIcons({ closeOutline, flag });
   }
 
+  ngOnInit() {
+    if (this.tarea) {
+      this.titulo = this.tarea.titulo;
+      this.descripcion = this.tarea.descripcion || '';
+      this.prioridad = this.tarea.prioridad;
+    }
+  }
+
   cancelar() {
     this.modalCtrl.dismiss(null, 'cancel');
   }
 
   guardar() {
     if (!this.titulo.trim()) return;
-    const result: NuevaTareaResult = {
+    const result: TareaFormResult = {
+      id: this.tarea?.id,
       titulo: this.titulo.trim(),
       descripcion: this.descripcion.trim(),
       prioridad: this.prioridad
