@@ -1,0 +1,102 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div class="perfil-container">
+
+    <div class="foto-perfil">
+      <div class="avatar">
+        <ion-icon name="person"></ion-icon>
+      </div>
+
+      <ion-button fill="clear" size="small">
+        Cambiar foto
+      </ion-button>
+    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Información personal</ion-card-title>
+        <ion-card-subtitle>Datos del usuario</ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">
+            Nombre completo
+          </ion-label>
+
+          <ion-input
+            type="text"
+            placeholder="Escriba su nombre"
+            [(ngModel)]="nombre">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">
+            Carrera
+          </ion-label>
+
+          <ion-input
+            type="text"
+            placeholder="Escriba su carrera"
+            [(ngModel)]="carrera">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">
+            Correo electrónico
+          </ion-label>
+
+          <ion-input
+            type="email"
+            placeholder="correo@ejemplo.com"
+            [(ngModel)]="correo">
+          </ion-input>
+        </ion-item>
+
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Configuraciones</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label>Notificaciones</ion-label>
+          <ion-toggle></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Bluetooth</ion-label>
+          <ion-toggle></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>NFC</ion-label>
+          <ion-toggle></ion-toggle>
+        </ion-item>
+
+      </ion-card-content>
+    </ion-card>
+
+    <ion-button
+      expand="block"
+      color="primary"
+      (click)="guardarPerfil()">
+      Guardar perfil
+    </ion-button>
+
+  </div>
+
+</ion-content>

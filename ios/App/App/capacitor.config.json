@@ -1,0 +1,14 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "mi-app",
+	"webDir": "www",
+	"packageClassList": [
+		"CapacitorSQLitePlugin",
+		"AppPlugin",
+		"GeolocationPlugin",
+		"HapticsPlugin",
+		"KeyboardPlugin",
+		"CAPNetworkPlugin",
+		"StatusBarPlugin"
+	]
+}
