@@ -1,0 +1,71 @@
+<div class="nfc-section">
+
+  <p class="app-list-eyebrow">Compartir por NFC</p>
+  <p class="intro-text" *ngIf="soportado() === false">
+    Este dispositivo no tiene NFC disponible.
+  </p>
+  <p class="intro-text" *ngIf="soportado() !== false">
+    Acerca un tag o dispositivo NFC para compartirle el texto (tap-to-share).
+  </p>
+
+  <ion-item class="campo-texto">
+    <ion-textarea
+      label="Texto a compartir"
+      labelPlacement="stacked"
+      placeholder="Escribe una nota para compartir por NFC..."
+      [ngModel]="texto()"
+      (ngModelChange)="texto.set($event)"
+      [disabled]="enviando()"
+      autoGrow="true">
+    </ion-textarea>
+  </ion-item>
+
+  <div class="accion-row">
+    <ion-button
+      expand="block"
+      [disabled]="enviando() || soportado() === false"
+      (click)="compartir()">
+      <ion-spinner *ngIf="enviando()" name="crescent" slot="start"></ion-spinner>
+      {{ enviando() ? 'Acerca un tag NFC...' : 'Compartir por NFC' }}
+    </ion-button>
+
+    <ion-button
+      *ngIf="enviando()"
+      expand="block"
+      fill="outline"
+      color="medium"
+      (click)="cancelar()">
+      Cancelar
+    </ion-button>
+  </div>
+
+  <p class="mensaje" *ngIf="estado()">
+    {{ estado() }}
+  </p>
+
+  <p class="app-list-eyebrow historial-title">Historial de compartidos</p>
+
+  <div class="app-list" *ngIf="historial().length > 0">
+    <div class="app-list-item historial-item" *ngFor="let registro of historial()">
+      <div class="historial-texto">
+        <h2 class="app-list-title">{{ registro.texto }}</h2>
+        <p class="app-list-body">{{ registro.fecha | date: 'dd/MM/yy, h:mm a' }}</p>
+      </div>
+      <ion-badge color="medium">{{ registro.tipo }}</ion-badge>
+    </div>
+  </div>
+
+  <p class="intro-text" *ngIf="historial().length === 0">
+    Todavía no has compartido nada.
+  </p>
+
+  <ion-button
+    *ngIf="historial().length > 0"
+    fill="clear"
+    size="small"
+    color="medium"
+    (click)="limpiarHistorial()">
+    Limpiar historial
+  </ion-button>
+
+</div>

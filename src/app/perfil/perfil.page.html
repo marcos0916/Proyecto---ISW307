@@ -3,61 +3,110 @@
     <ion-title>Configuración</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-segment [value]="vista" (ionChange)="cambiarVista($event)">
+    <ion-segment [value]="vista()" (ionChange)="cambiarVista($event)">
       <ion-segment-button value="perfil">
         <ion-label>Perfil</ion-label>
       </ion-segment-button>
       <ion-segment-button value="bluetooth">
         <ion-label>Bluetooth</ion-label>
       </ion-segment-button>
+      <ion-segment-button value="nfc">
+        <ion-label>NFC</ion-label>
+      </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  <ion-card *ngIf="vista === 'perfil'">
-    <ion-card-header>
-      <div class="avatar">
-        <ion-icon name="person"></ion-icon>
-      </div>
-      <ion-card-title>Datos del estudiante</ion-card-title>
-      <ion-card-subtitle>Se guardan en este dispositivo</ion-card-subtitle>
-    </ion-card-header>
+  <ng-container *ngIf="vista() === 'perfil'">
+    <ion-card>
+      <ion-card-header>
+        <div class="foto-perfil">
+          <div class="avatar">
+            <img *ngIf="foto()" [src]="foto()" alt="Foto de perfil" />
+            <ion-icon *ngIf="!foto()" name="person"></ion-icon>
+          </div>
 
-    <ion-card-content>
-      <ion-item>
-        <ion-input
-          label="Nombre completo"
-          labelPlacement="stacked"
-          placeholder="Tu nombre"
-          [(ngModel)]="nombre">
-        </ion-input>
-      </ion-item>
+          <ion-button fill="clear" size="small" (click)="cambiarFoto()">
+            Cambiar foto
+          </ion-button>
+        </div>
 
-      <ion-item>
-        <ion-input
-          label="Carrera"
-          labelPlacement="stacked"
-          placeholder="Tu carrera"
-          [(ngModel)]="carrera">
-        </ion-input>
-      </ion-item>
+        <ion-card-title>Datos del estudiante</ion-card-title>
+        <ion-card-subtitle>Se guardan en este dispositivo</ion-card-subtitle>
+      </ion-card-header>
 
-      <ion-item>
-        <ion-input
-          label="Correo"
-          labelPlacement="stacked"
-          type="email"
-          placeholder="tucorreo@uapa.edu.do"
-          [(ngModel)]="correo">
-        </ion-input>
-      </ion-item>
+      <ion-card-content>
+        <ion-item>
+          <ion-input
+            label="Nombre completo"
+            labelPlacement="stacked"
+            placeholder="Tu nombre"
+            [ngModel]="nombre()"
+            (ngModelChange)="nombre.set($event)">
+          </ion-input>
+        </ion-item>
 
-      <ion-button expand="block" (click)="guardarPerfil()">
-        Guardar perfil
-      </ion-button>
-    </ion-card-content>
-  </ion-card>
+        <ion-item>
+          <ion-input
+            label="Carrera"
+            labelPlacement="stacked"
+            placeholder="Tu carrera"
+            [ngModel]="carrera()"
+            (ngModelChange)="carrera.set($event)">
+          </ion-input>
+        </ion-item>
 
-  <app-bluetooth *ngIf="vista === 'bluetooth'"></app-bluetooth>
+        <ion-item>
+          <ion-input
+            label="Correo"
+            labelPlacement="stacked"
+            type="email"
+            placeholder="tucorreo@uapa.edu.do"
+            [ngModel]="correo()"
+            (ngModelChange)="correo.set($event)">
+          </ion-input>
+        </ion-item>
+
+        <ion-button expand="block" (click)="guardarPerfil()">
+          Guardar perfil
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Configuraciones</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+        <ion-item>
+          <ion-label>Notificaciones</ion-label>
+          <ion-toggle
+            [checked]="notificaciones()"
+            (ionChange)="notificaciones.set($event.detail.checked); cambiarConfiguracion()">
+          </ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Bluetooth</ion-label>
+          <ion-toggle
+            [checked]="bluetoothPref()"
+            (ionChange)="bluetoothPref.set($event.detail.checked); cambiarConfiguracion()">
+          </ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>NFC</ion-label>
+          <ion-toggle
+            [checked]="nfcPref()"
+            (ionChange)="nfcPref.set($event.detail.checked); cambiarConfiguracion()">
+          </ion-toggle>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+  <app-bluetooth *ngIf="vista() === 'bluetooth'"></app-bluetooth>
+  <app-nfc *ngIf="vista() === 'nfc'"></app-nfc>
 </ion-content>

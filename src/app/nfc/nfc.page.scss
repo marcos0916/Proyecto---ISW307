@@ -1,0 +1,43 @@
+.nfc-section {
+  padding-top: 20px;
+}
+
+.intro-text {
+  color: var(--ion-color-medium);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.campo-texto {
+  --padding-start: 0;
+  margin-bottom: 16px;
+}
+
+.accion-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mensaje {
+  margin-top: 16px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.historial-title {
+  margin-top: 32px;
+}
+
+.historial-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.historial-texto {
+  min-width: 0;
+}

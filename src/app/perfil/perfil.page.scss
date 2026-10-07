@@ -8,6 +8,12 @@ ion-card-header {
   padding-top: 24px;
 }
 
+.foto-perfil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .avatar {
   width: 56px;
   height: 56px;
@@ -17,11 +23,24 @@ ion-card-header {
   align-items: center;
   justify-content: center;
   margin-bottom: 12px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
   ion-icon {
     font-size: 28px;
     color: var(--ion-color-primary);
   }
+}
+
+.mensaje {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
 }
 
 ion-card-title {

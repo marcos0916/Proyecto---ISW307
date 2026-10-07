@@ -15,30 +15,31 @@
     <ion-button
       expand="block"
       fill="outline"
-      [disabled]="buscando"
+      [disabled]="buscando()"
       (click)="buscarDispositivos()">
-      {{ buscando ? 'Buscando...' : 'Buscar dispositivos' }}
+      <ion-spinner *ngIf="buscando()" name="crescent" slot="start"></ion-spinner>
+      {{ buscando() ? 'Buscando...' : 'Buscar dispositivos' }}
     </ion-button>
 
     <ion-button
       expand="block"
       fill="outline"
       color="medium"
-      [disabled]="!buscando"
+      [disabled]="!buscando()"
       (click)="detenerBusqueda()">
       Detener búsqueda
     </ion-button>
   </div>
 
-  <p class="mensaje" *ngIf="mensaje">
-    {{ mensaje }}
+  <p class="mensaje" *ngIf="mensaje()">
+    {{ mensaje() }}
   </p>
 
-  <ng-container *ngIf="dispositivos.length > 0">
+  <ng-container *ngIf="dispositivos().length > 0">
     <p class="app-list-eyebrow dispositivos-title">Dispositivos encontrados</p>
 
     <div class="app-list">
-      <div class="app-list-item" *ngFor="let dispositivo of dispositivos">
+      <div class="app-list-item" *ngFor="let dispositivo of dispositivos()">
         <h2 class="app-list-title">{{ dispositivo.name || 'Dispositivo sin nombre' }}</h2>
         <p class="app-list-body">ID: {{ dispositivo.deviceId }}</p>
       </div>
