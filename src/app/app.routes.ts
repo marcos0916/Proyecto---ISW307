@@ -11,11 +11,10 @@ export const routes: Routes = [
     path: 'inicio',
     loadComponent: () => import('./pages/noticias/noticias.page').then(m => m.NoticiasPage),
   },
-  // Pendiente: módulo de tareas vive en feature/modulo-2-tareas, todavía no mergeado a esta rama.
-  // {
-  //   path: 'tareas',
-  //   loadComponent: () => import('./pages/tareas/tareas.page').then(m => m.TareasPage),
-  // },
+  {
+    path: 'tareas',
+    loadComponent: () => import('./pages/tareas/tareas.page').then(m => m.TareasPage),
+  },
   {
     path: 'campus',
     loadComponent: () => import('./home/home.page').then(m => m.HomePage),
@@ -30,15 +29,7 @@ export const routes: Routes = [
   },
   {
     path: '',
-<<<<<<< HEAD
     redirectTo: 'inicio',
-=======
-    redirectTo: 'tareas',
->>>>>>> feature/modulo-2-tareas
     pathMatch: 'full',
-  },
-  {
-    path: 'tareas',
-    loadComponent: () => import('./pages/tareas/tareas.page').then( m => m.TareasPage)
   },
 ];
