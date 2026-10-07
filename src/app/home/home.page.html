@@ -1,9 +1,25 @@
+<<<<<<< HEAD
 <ion-header>
   <ion-toolbar>
     <ion-title>Servicios de Localización</ion-title>
+=======
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>
+      <ion-icon name="navigate-outline" class="title-icon"></ion-icon>
+      GPS &amp; Lugares Cercanos
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="shareLocation()" [disabled]="!coords()">
+        <ion-icon slot="icon-only" name="share-social-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+>>>>>>> feature/modulo-2-tareas
   </ion-toolbar>
+  <ion-progress-bar type="indeterminate" *ngIf="isLoading()"></ion-progress-bar>
 </ion-header>
 
+<<<<<<< HEAD
 <ion-content class="ion-padding">
   <div class="accion-row">
     <ion-button fill="solid" (click)="locateMe()">Mi ubicación</ion-button>
@@ -43,5 +59,75 @@
         <span class="note-status">Sincronizado</span>
       </div>
     </div>
+=======
+<ion-content [fullscreen]="true">
+  <div class="page">
+    <div class="actions-row">
+      <ion-button expand="block" class="action-btn" (click)="loadCurrentLocation()" [disabled]="isLoading()">
+        <ion-icon slot="start" name="locate-outline"></ion-icon>
+        Ubicarme
+      </ion-button>
+      <ion-button expand="block" class="action-btn" color="secondary" (click)="searchNearby()" [disabled]="!coords() || isLoading()">
+        <ion-icon slot="start" name="search-outline"></ion-icon>
+        Buscar Sitios
+      </ion-button>
+    </div>
+
+    <ion-card class="coords-card" *ngIf="coords() as c">
+      <div class="stats-row">
+        <div class="stat">
+          <ion-icon name="locate-outline"></ion-icon>
+          <div class="stat-text">
+            <span class="stat-label">Latitud</span>
+            <span class="stat-value">{{ c.lat | number:'1.5-5' }}</span>
+          </div>
+        </div>
+        <div class="stat">
+          <ion-icon name="navigate-outline"></ion-icon>
+          <div class="stat-text">
+            <span class="stat-label">Longitud</span>
+            <span class="stat-value">{{ c.lng | number:'1.5-5' }}</span>
+          </div>
+        </div>
+        <div class="stat">
+          <ion-icon name="radio-outline"></ion-icon>
+          <div class="stat-text">
+            <span class="stat-label">Precisión</span>
+            <span class="stat-value">±{{ c.accuracy | number:'1.1-1' }} m</span>
+          </div>
+        </div>
+      </div>
+
+      <ion-item class="tracking-row" lines="none">
+        <ion-icon name="navigate-outline" slot="start" [color]="isTracking() ? 'success' : 'medium'"></ion-icon>
+        <ion-label>Seguimiento en vivo</ion-label>
+        <ion-toggle slot="end" [checked]="isTracking()" (ionChange)="toggleTracking()"></ion-toggle>
+      </ion-item>
+    </ion-card>
+
+    <ion-card class="empty-card" *ngIf="!coords()">
+      <ion-icon name="map-outline"></ion-icon>
+      <p>Presiona <strong>Ubicarme</strong> para capturar tu posición GPS y descubrir sitios cercanos.</p>
+    </ion-card>
+
+    <div class="map-card">
+      <div id="map"></div>
+    </div>
+
+¿    <ion-list *ngIf="places().length > 0" class="places-list" inset="true">
+      <ion-list-header>
+        <ion-label>Lugares Cercanos</ion-label>
+        <ion-badge color="primary">{{ places().length }}</ion-badge>
+      </ion-list-header>
+
+      <ion-item *ngFor="let place of places()" button detail="true" (click)="focusOnMap(place.lat, place.lng)">
+        <ion-icon [name]="iconFor(place.type)" slot="start" color="primary"></ion-icon>
+        <ion-label>
+          <h2>{{ place.name }}</h2>
+          <p>{{ place.type | uppercase }}</p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+>>>>>>> feature/modulo-2-tareas
   </div>
 </ion-content>

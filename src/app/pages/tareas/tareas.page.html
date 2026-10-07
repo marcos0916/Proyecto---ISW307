@@ -1,0 +1,108 @@
+<ion-header class="ion-no-border tareas-header">
+  <ion-toolbar class="header-toolbar">
+    <ion-title>
+      <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+      <span>Gestor de Tareas</span>
+    </ion-title>
+  </ion-toolbar>
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar
+      [value]="busqueda()"
+      (ionInput)="onBusquedaChange($event.detail.value)"
+      placeholder="Buscar tarea..."
+      [debounce]="250"
+      mode="ios">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="tareas-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingText="Desliza para actualizar..." refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Resumen de progreso -->
+  <div class="progreso-card" *ngIf="totalTareas() > 0">
+    <div class="progreso-info">
+      <span class="progreso-label">{{ completadasCount() }} de {{ totalTareas() }} completadas</span>
+      <span class="progreso-pct">{{ progreso() * 100 | number:'1.0-0' }}%</span>
+    </div>
+    <ion-progress-bar [value]="progreso()" color="success"></ion-progress-bar>
+  </div>
+
+  <!-- Lista de tareas -->
+  <ion-list class="tareas-list" *ngIf="tareasFiltradas().length > 0">
+    <p class="reorder-hint" *ngIf="!busqueda() && tareasFiltradas().length > 1">
+      <ion-icon name="reorder-three-outline"></ion-icon>
+      Mantén presionado el ícono y arrastra para reordenar
+    </p>
+
+    <ion-reorder-group [disabled]="!!busqueda()" (ionReorderEnd)="onReorder($event)">
+      <ion-item-sliding *ngFor="let t of tareasFiltradas()" #slidingItem class="tarea-sliding">
+        <ion-item-options side="start">
+          <ion-item-option color="tertiary" (click)="editar(t, slidingItem)">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+
+        <ion-item
+          class="tarea-card"
+          lines="none"
+          [class.completada]="t.completada === 1"
+          appLongPress
+          (longPress)="editar(t)">
+          <ion-icon
+            slot="start"
+            class="check-icon"
+            [color]="t.completada === 1 ? 'success' : 'medium'"
+            [name]="t.completada === 1 ? 'checkmark-circle' : 'ellipse-outline'"
+            (click)="toggleCompletada(t)">
+          </ion-icon>
+
+          <ion-label class="tarea-label">
+            <h2>{{ t.titulo }}</h2>
+            <p *ngIf="t.descripcion">{{ t.descripcion }}</p>
+            <p class="tarea-fecha" *ngIf="t.fechaCreacion">
+              <ion-icon name="time-outline"></ion-icon>
+              {{ t.fechaCreacion | date:'d MMM, h:mm a' }}
+            </p>
+          </ion-label>
+
+          <ion-badge slot="end" [color]="colorPrioridad(t.prioridad)" class="prioridad-badge">
+            <ion-icon name="flag"></ion-icon>
+            {{ t.prioridad }}
+          </ion-badge>
+
+          <ion-reorder slot="end"></ion-reorder>
+        </ion-item>
+
+        <ion-item-options side="end">
+          <ion-item-option color="danger" (click)="eliminar(t, slidingItem)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-reorder-group>
+  </ion-list>
+
+  <!-- Estado vacío: sin tareas -->
+  <div class="estado-vacio" *ngIf="totalTareas() === 0">
+    <ion-icon name="clipboard-outline"></ion-icon>
+    <h3>No tienes tareas todavía</h3>
+    <p>Toca el botón + para agregar tu primera tarea</p>
+  </div>
+
+  <!-- Estado vacío: sin resultados de búsqueda -->
+  <div class="estado-vacio" *ngIf="totalTareas() > 0 && tareasFiltradas().length === 0">
+    <ion-icon name="search-outline"></ion-icon>
+    <h3>Sin resultados</h3>
+    <p>No hay tareas que coincidan con "{{ busqueda() }}"</p>
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="abrirModalNuevaTarea()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

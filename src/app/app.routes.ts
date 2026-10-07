@@ -30,7 +30,15 @@ export const routes: Routes = [
   },
   {
     path: '',
+<<<<<<< HEAD
     redirectTo: 'inicio',
+=======
+    redirectTo: 'tareas',
+>>>>>>> feature/modulo-2-tareas
     pathMatch: 'full',
+  },
+  {
+    path: 'tareas',
+    loadComponent: () => import('./pages/tareas/tareas.page').then( m => m.TareasPage)
   },
 ];
