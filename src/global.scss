@@ -26,18 +26,128 @@
 @import "@ionic/angular/css/flex-utils.css";
 
 /**
- * Ionic Dark Mode
+ * Tema claro fijo
  * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
+ * A propósito NO se importa la paleta oscura del sistema: el diseño pedido
+ * (fondo blanco, alto contraste, separadores finos estilo app nativa) se ve
+ * mal si el teléfono cambia a modo oscuro y los estilos custom de cada
+ * página se quedan pensados para fondo claro. Los colores base viven en
+ * theme/variables.scss.
  */
-
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
 @import "leaflet/dist/leaflet.css";
 
 .leaflet-marker-icon,
 .leaflet-marker-shadow {
   filter: none;
+}
+
+/**
+ * Barra de tabs de la app, sin <ion-tabs>
+ * -----------------------------------------------------
+ * app.component.html pone <ion-tab-bar slot="bottom"> directo dentro de
+ * <ion-app>, no envuelto en <ion-tabs> (ver app.routes.ts para el porqué:
+ * <ion-tabs> + <ion-router-outlet> anidado produce un router-outlet
+ * huérfano que bloquea clics y scroll en toda la app). Sin ese wrapper,
+ * el navegador no sabe posicionar la barra ni reservarle espacio al
+ * contenido, así que se hace a mano acá.
+ */
+:root {
+  --app-tab-bar-height: 56px;
+}
+
+ion-router-outlet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--app-tab-bar-height);
+}
+
+ion-tab-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--app-tab-bar-height);
+  z-index: 10;
+  --background: #ffffff;
+  --border: 1px solid var(--app-divider-color);
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
+}
+
+ion-tab-button {
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 22px;
+  }
+
+  ion-label {
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+/**
+ * Header plano estilo app nativa
+ * -----------------------------------------------------
+ * Headers blancos sin línea/sombra pesada, título grande y en negrita,
+ * en vez del toolbar de color sólido que traía cada módulo por separado.
+ */
+ion-toolbar {
+  --background: #ffffff;
+  --color: var(--ion-color-dark);
+  --border-color: var(--app-divider-color);
+
+  ion-title {
+    font-weight: 700;
+    font-size: 1.3rem;
+  }
+}
+
+/**
+ * Lista "tipo glosario": separadores finos en vez de tarjetas con fondo
+ * -----------------------------------------------------
+ * Clase reutilizable para cualquier página con una lista de items
+ * (noticias, dispositivos encontrados, notas, etc.). Reemplaza el patrón
+ * de ion-card apiladas por filas con borde inferior delgado, más legible
+ * y más parecido a listados nativos (Contactos, Ajustes, apps de glosario).
+ */
+.app-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-list-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--app-divider-color);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.app-list-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 4px;
+}
+
+.app-list-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ion-color-dark);
+  margin: 0 0 6px;
+  line-height: 1.3;
+}
+
+.app-list-body {
+  font-size: 0.95rem;
+  color: var(--ion-color-medium);
+  line-height: 1.5;
+  margin: 0;
 }

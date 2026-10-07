@@ -1,17 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PerfilPage } from './perfil.page';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import { newspaperOutline, checkboxOutline, mapOutline, micOutline, settingsOutline } from 'ionicons/icons';
 
-describe('PerfilPage', () => {
-  let component: PerfilPage;
-  let fixture: ComponentFixture<PerfilPage>;
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PerfilPage);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+@Component({
+  selector: 'app-tabs',
+  templateUrl: './tabs.page.html',
+  styleUrls: ['./tabs.page.scss'],
+  standalone: true,
+  imports: [CommonModule, IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel]
+})
+export class TabsPage {
+  constructor() {
+    addIcons({ newspaperOutline, checkboxOutline, mapOutline, micOutline, settingsOutline });
+  }
+}

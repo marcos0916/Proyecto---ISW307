@@ -1,21 +1,23 @@
-ion-card {
-  margin-bottom: 20px;
+.intro-text {
+  color: var(--ion-color-medium);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0 0 16px;
 }
 
-ion-card-title {
-  font-weight: bold;
+.accion-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .mensaje {
-  margin-top: 20px;
+  margin-top: 16px;
   text-align: center;
-  font-weight: bold;
+  font-weight: 600;
+  color: var(--ion-color-dark);
 }
 
-ion-button {
-  margin-top: 12px;
-}
-
-ion-item {
-  --padding-start: 0;
+.dispositivos-title {
+  margin-top: 28px;
 }

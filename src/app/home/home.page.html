@@ -5,21 +5,25 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-button expand="block" (click)="locateMe()">Mi ubicación</ion-button>
-  <ion-button expand="block" color="success" (click)="startTracking()" [disabled]="isTracking">
-    Iniciar tiempo real
-  </ion-button>
-  <ion-button expand="block" color="medium" (click)="stopTracking()" [disabled]="!isTracking">
-    Detener tiempo real
-  </ion-button>
+  <div class="accion-row">
+    <ion-button fill="solid" (click)="locateMe()">Mi ubicación</ion-button>
+    <ion-button fill="outline" color="success" (click)="startTracking()" [disabled]="isTracking">
+      Iniciar tiempo real
+    </ion-button>
+    <ion-button fill="outline" color="medium" (click)="stopTracking()" [disabled]="!isTracking">
+      Detener tiempo real
+    </ion-button>
+  </div>
 
   <div id="map"></div>
 
-  <ion-text *ngIf="coordsText">
-    <p>{{ coordsText }}</p>
+  <ion-text *ngIf="coordsText" color="medium">
+    <p class="coords-text">{{ coordsText }}</p>
   </ion-text>
 
   <div class="notes-section">
+    <p class="app-list-eyebrow">Notas</p>
+
     <div class="note-input">
       <input
         type="text"
@@ -27,15 +31,17 @@
         [(ngModel)]="noteText"
         (keyup.enter)="saveNote()"
       />
-      <ion-button (click)="saveNote()">GUARDAR</ion-button>
+      <ion-button (click)="saveNote()">Guardar</ion-button>
     </div>
 
-    <div class="note-item" *ngFor="let note of notes">
-      <div class="note-content">
-        <span class="note-text">{{ note.text }}</span>
-        <span class="note-date">{{ note.date | date: 'dd/MM/yy, h:mm a' }}</span>
+    <div class="app-list">
+      <div class="app-list-item note-item" *ngFor="let note of notes">
+        <div class="note-content">
+          <span class="app-list-title note-text">{{ note.text }}</span>
+          <span class="note-date">{{ note.date | date: 'dd/MM/yy, h:mm a' }}</span>
+        </div>
+        <span class="note-status">Sincronizado</span>
       </div>
-      <span class="note-status">Sincronizado</span>
     </div>
   </div>
 </ion-content>

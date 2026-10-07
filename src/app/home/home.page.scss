@@ -1,27 +1,45 @@
+.accion-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
 #map {
-  height: 60vh;
+  height: 50vh;
   width: 100%;
-  margin-top: 12px;
-  border-radius: 10px;
+  margin-top: 4px;
+  border-radius: 12px;
   overflow: hidden;
+  border: 1px solid var(--app-divider-color);
+}
+
+.coords-text {
+  font-size: 0.85rem;
+  margin: 10px 2px 0;
 }
 
 .notes-section {
-  margin-top: 20px;
+  margin-top: 28px;
 }
 
 .note-input {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 
   input {
     flex: 1;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #444;
-    background: #1e1e1e;
-    color: #fff;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--app-divider-color);
+    background: #f9fafb;
+    color: var(--ion-color-dark);
+    font-size: 0.95rem;
+
+    &::placeholder {
+      color: var(--ion-color-medium);
+    }
   }
 }
 
@@ -29,29 +47,31 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #333;
+  gap: 12px;
 }
 
 .note-content {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
 .note-text {
-  font-weight: 500;
+  margin: 0;
 }
 
 .note-date {
-  font-size: 12px;
-  color: #888;
+  font-size: 0.78rem;
+  color: var(--ion-color-medium);
 }
 
 .note-status {
-  background: #22c55e;
-  color: #000;
+  flex-shrink: 0;
+  background: #dcfce7;
+  color: #15803d;
   padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  border-radius: 999px;
+  font-size: 0.72rem;
   font-weight: 600;
 }

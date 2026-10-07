@@ -5,14 +5,7 @@ import {
   IonHeader,
   IonTitle,
   IonToolbar,
-  IonButton,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonCard,
-  IonCardHeader,
-  IonCardTitle,
-  IonCardContent
+  IonButton
 } from '@ionic/angular';
 
 import { BleClient } from '@capacitor-community/bluetooth-le';
@@ -27,13 +20,6 @@ import { BleClient } from '@capacitor-community/bluetooth-le';
     IonTitle,
     IonToolbar,
     IonButton,
-    IonList,
-    IonItem,
-    IonLabel,
-    IonCard,
-    IonCardHeader,
-    IonCardTitle,
-    IonCardContent,
     CommonModule
   ]
 })

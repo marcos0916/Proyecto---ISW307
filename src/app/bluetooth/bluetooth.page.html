@@ -1,84 +1,54 @@
 <ion-header>
-  <ion-toolbar color="dark">
+  <ion-toolbar>
     <ion-title>Bluetooth</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Bluetooth BLE</ion-card-title>
-    </ion-card-header>
+  <p class="app-list-eyebrow">Bluetooth BLE</p>
+  <p class="intro-text">
+    Permite buscar dispositivos Bluetooth de baja energía cercanos al dispositivo.
+  </p>
 
-    <ion-card-content>
+  <div class="accion-row">
+    <ion-button
+      expand="block"
+      (click)="iniciarBluetooth()">
+      Activar Bluetooth
+    </ion-button>
 
-      <p>
-        Permite buscar dispositivos Bluetooth de baja energía
-        cercanos al dispositivo.
-      </p>
+    <ion-button
+      expand="block"
+      fill="outline"
+      [disabled]="buscando"
+      (click)="buscarDispositivos()">
+      {{ buscando ? 'Buscando...' : 'Buscar dispositivos' }}
+    </ion-button>
 
-      <ion-button
-        expand="block"
-        (click)="iniciarBluetooth()">
-        Activar Bluetooth
-      </ion-button>
+    <ion-button
+      expand="block"
+      fill="outline"
+      color="medium"
+      [disabled]="!buscando"
+      (click)="detenerBusqueda()">
+      Detener búsqueda
+    </ion-button>
+  </div>
 
-      <ion-button
-        expand="block"
-        color="primary"
-        [disabled]="buscando"
-        (click)="buscarDispositivos()">
-        {{ buscando ? 'Buscando...' : 'Buscar dispositivos' }}
-      </ion-button>
+  <p class="mensaje" *ngIf="mensaje">
+    {{ mensaje }}
+  </p>
 
-      <ion-button
-        expand="block"
-        color="medium"
-        [disabled]="!buscando"
-        (click)="detenerBusqueda()">
-        Detener búsqueda
-      </ion-button>
+  <ng-container *ngIf="dispositivos.length > 0">
+    <p class="app-list-eyebrow dispositivos-title">Dispositivos encontrados</p>
 
-      <p class="mensaje" *ngIf="mensaje">
-        {{ mensaje }}
-      </p>
-
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card *ngIf="dispositivos.length > 0">
-
-    <ion-card-header>
-      <ion-card-title>
-        Dispositivos encontrados
-      </ion-card-title>
-    </ion-card-header>
-
-    <ion-card-content>
-
-      <ion-list>
-
-        <ion-item *ngFor="let dispositivo of dispositivos">
-
-          <ion-label>
-
-            <h2>
-              {{ dispositivo.name || 'Dispositivo sin nombre' }}
-            </h2>
-
-            <p>
-              ID: {{ dispositivo.deviceId }}
-            </p>
-
-          </ion-label>
-
-        </ion-item>
-
-      </ion-list>
-
-    </ion-card-content>
-
-  </ion-card>
+    <div class="app-list">
+      <div class="app-list-item" *ngFor="let dispositivo of dispositivos">
+        <h2 class="app-list-title">{{ dispositivo.name || 'Dispositivo sin nombre' }}</h2>
+        <p class="app-list-body">ID: {{ dispositivo.deviceId }}</p>
+      </div>
+    </div>
+  </ng-container>
 
 </ion-content>
