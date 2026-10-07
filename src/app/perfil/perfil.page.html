@@ -10,10 +10,11 @@
 
     <div class="foto-perfil">
       <div class="avatar">
-        <ion-icon name="person"></ion-icon>
+        <img *ngIf="foto()" [src]="foto()" alt="Foto de perfil" />
+        <ion-icon *ngIf="!foto()" name="person"></ion-icon>
       </div>
 
-      <ion-button fill="clear" size="small">
+      <ion-button fill="clear" size="small" (click)="cambiarFoto()">
         Cambiar foto
       </ion-button>
     </div>
@@ -34,7 +35,8 @@
           <ion-input
             type="text"
             placeholder="Escriba su nombre"
-            [(ngModel)]="nombre">
+            [ngModel]="nombre()"
+            (ngModelChange)="nombre.set($event)">
           </ion-input>
         </ion-item>
 
@@ -46,7 +48,8 @@
           <ion-input
             type="text"
             placeholder="Escriba su carrera"
-            [(ngModel)]="carrera">
+            [ngModel]="carrera()"
+            (ngModelChange)="carrera.set($event)">
           </ion-input>
         </ion-item>
 
@@ -58,7 +61,8 @@
           <ion-input
             type="email"
             placeholder="correo@ejemplo.com"
-            [(ngModel)]="correo">
+            [ngModel]="correo()"
+            (ngModelChange)="correo.set($event)">
           </ion-input>
         </ion-item>
 
@@ -74,17 +78,26 @@
 
         <ion-item>
           <ion-label>Notificaciones</ion-label>
-          <ion-toggle></ion-toggle>
+          <ion-toggle
+            [checked]="notificaciones()"
+            (ionChange)="notificaciones.set($event.detail.checked); cambiarConfiguracion()">
+          </ion-toggle>
         </ion-item>
 
         <ion-item>
           <ion-label>Bluetooth</ion-label>
-          <ion-toggle></ion-toggle>
+          <ion-toggle
+            [checked]="bluetoothPref()"
+            (ionChange)="bluetoothPref.set($event.detail.checked); cambiarConfiguracion()">
+          </ion-toggle>
         </ion-item>
 
         <ion-item>
           <ion-label>NFC</ion-label>
-          <ion-toggle></ion-toggle>
+          <ion-toggle
+            [checked]="nfcPref()"
+            (ionChange)="nfcPref.set($event.detail.checked); cambiarConfiguracion()">
+          </ion-toggle>
         </ion-item>
 
       </ion-card-content>
@@ -96,6 +109,86 @@
       (click)="guardarPerfil()">
       Guardar perfil
     </ion-button>
+
+    <!-- NFC: tap-to-share -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Compartir por NFC</ion-card-title>
+        <ion-card-subtitle *ngIf="nfcSoportado() === false">
+          Este dispositivo no tiene NFC disponible
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <ion-item>
+          <ion-label position="stacked">Texto a compartir</ion-label>
+          <ion-textarea
+            placeholder="Escribe una nota para compartir por NFC..."
+            [ngModel]="nfcTexto()"
+            (ngModelChange)="nfcTexto.set($event)"
+            [disabled]="nfcEnviando()"
+            autoGrow="true">
+          </ion-textarea>
+        </ion-item>
+
+        <ion-button
+          expand="block"
+          [disabled]="nfcEnviando() || nfcSoportado() === false"
+          (click)="compartirPorNfc()">
+          <ion-spinner *ngIf="nfcEnviando()" name="crescent" slot="start"></ion-spinner>
+          {{ nfcEnviando() ? 'Acerca un tag NFC...' : 'Compartir por NFC' }}
+        </ion-button>
+
+        <ion-button
+          *ngIf="nfcEnviando()"
+          expand="block"
+          fill="outline"
+          color="medium"
+          (click)="cancelarNfc()">
+          Cancelar
+        </ion-button>
+
+        <p class="mensaje" *ngIf="nfcEstado()">
+          {{ nfcEstado() }}
+        </p>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Historial de compartidos -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Historial de compartidos</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content>
+
+        <ion-list *ngIf="historial().length > 0">
+          <ion-item *ngFor="let registro of historial()">
+            <ion-label>
+              <h2>{{ registro.texto }}</h2>
+              <p>{{ registro.fecha | date: 'dd/MM/yy, h:mm a' }}</p>
+            </ion-label>
+            <ion-badge slot="end" color="medium">{{ registro.tipo }}</ion-badge>
+          </ion-item>
+        </ion-list>
+
+        <p class="mensaje" *ngIf="historial().length === 0">
+          Todavía no has compartido nada.
+        </p>
+
+        <ion-button
+          *ngIf="historial().length > 0"
+          fill="clear"
+          size="small"
+          color="medium"
+          (click)="limpiarHistorial()">
+          Limpiar historial
+        </ion-button>
+
+      </ion-card-content>
+    </ion-card>
 
   </div>
 

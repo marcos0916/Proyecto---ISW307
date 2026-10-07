@@ -27,27 +27,28 @@
       <ion-button
         expand="block"
         color="primary"
-        [disabled]="buscando"
+        [disabled]="buscando()"
         (click)="buscarDispositivos()">
-        {{ buscando ? 'Buscando...' : 'Buscar dispositivos' }}
+        <ion-spinner *ngIf="buscando()" name="crescent" slot="start"></ion-spinner>
+        {{ buscando() ? 'Buscando...' : 'Buscar dispositivos' }}
       </ion-button>
 
       <ion-button
         expand="block"
         color="medium"
-        [disabled]="!buscando"
+        [disabled]="!buscando()"
         (click)="detenerBusqueda()">
         Detener búsqueda
       </ion-button>
 
-      <p class="mensaje" *ngIf="mensaje">
-        {{ mensaje }}
+      <p class="mensaje" *ngIf="mensaje()">
+        {{ mensaje() }}
       </p>
 
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="dispositivos.length > 0">
+  <ion-card *ngIf="dispositivos().length > 0">
 
     <ion-card-header>
       <ion-card-title>
@@ -59,7 +60,7 @@
 
       <ion-list>
 
-        <ion-item *ngFor="let dispositivo of dispositivos">
+        <ion-item *ngFor="let dispositivo of dispositivos()">
 
           <ion-label>
 

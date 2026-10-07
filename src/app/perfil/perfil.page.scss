@@ -1,0 +1,36 @@
+// Estilos mínimos para que la foto de perfil se vea como avatar circular.
+// El resto de la página no tenía estilos propios (se mantiene así).
+.foto-perfil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ion-color-light, #f4f5f8);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  ion-icon {
+    font-size: 36px;
+    color: var(--ion-color-medium, #92949c);
+  }
+}
+
+.mensaje {
+  margin: 8px 0 0;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium, #92949c);
+}
