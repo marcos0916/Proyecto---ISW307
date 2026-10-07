@@ -20,10 +20,10 @@ export const routes: Routes = [
     path: 'campus',
     loadComponent: () => import('./home/home.page').then(m => m.HomePage),
   },
-  {
-    path: 'podcasts',
-    loadComponent: () => import('./bluetooth/bluetooth.page').then(m => m.BluetoothPage),
-  },
+  // "Podcasts" le pertenece al Módulo 4 (Multimedia + Cámara, Estudiante D),
+  // que todavía no está mergeado. Bluetooth/NFC es parte del Módulo 5 (el
+  // mismo estudiante de Perfil), así que vive dentro de /configuracion como
+  // una sección más, no como tab propio.
   {
     path: 'configuracion',
     loadComponent: () => import('./perfil/perfil.page').then(m => m.PerfilPage),

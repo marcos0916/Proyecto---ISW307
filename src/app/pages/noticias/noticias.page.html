@@ -21,9 +21,18 @@
   </div>
 
   <div class="app-list ion-padding-horizontal">
-    <div class="app-list-item" *ngFor="let item of noticias()">
-      <p class="app-list-eyebrow">{{ item.fecha }}</p>
-      <h2 class="app-list-title" style="text-transform: capitalize;">{{ item.title }}</h2>
+    <div
+      class="app-list-item noticia-item"
+      *ngFor="let item of noticias(); let first = first"
+      [class.noticia-destacada]="first">
+      <div class="noticia-meta">
+        <span class="categoria-chip" [ngClass]="claseCategoria(item.categoria)">
+          <ion-icon [name]="iconoCategoria(item.categoria)"></ion-icon>
+          {{ item.categoria }}
+        </span>
+        <span class="noticia-fecha">{{ item.fecha }}</span>
+      </div>
+      <h2 class="app-list-title">{{ item.title }}</h2>
       <p class="app-list-body">{{ item.body }}</p>
     </div>
   </div>

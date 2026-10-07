@@ -13,7 +13,27 @@ import {
   IonButton,
   IonIcon
 } from '@ionic/angular';
+import { addIcons } from 'ionicons';
+import {
+  schoolOutline, calendarOutline, megaphoneOutline, basketballOutline, colorPaletteOutline, newspaperOutline
+} from 'ionicons/icons';
 import { NoticiasService, Noticia } from '../../services/noticias.service';
+
+const ICONO_POR_CATEGORIA: Record<string, string> = {
+  'Académico': 'school-outline',
+  'Evento': 'calendar-outline',
+  'Comunicado': 'megaphone-outline',
+  'Deportes': 'basketball-outline',
+  'Cultura': 'color-palette-outline'
+};
+
+const CLASE_POR_CATEGORIA: Record<string, string> = {
+  'Académico': 'chip-academico',
+  'Evento': 'chip-evento',
+  'Comunicado': 'chip-comunicado',
+  'Deportes': 'chip-deportes',
+  'Cultura': 'chip-cultura'
+};
 
 @Component({
   selector: 'app-noticias',
@@ -44,10 +64,20 @@ export class NoticiasPage implements OnInit {
   cargando = signal(true);
   error = signal<string | null>(null);
 
-  constructor(private noticiasService: NoticiasService) {}
+  constructor(private noticiasService: NoticiasService) {
+    addIcons({ schoolOutline, calendarOutline, megaphoneOutline, basketballOutline, colorPaletteOutline, newspaperOutline });
+  }
 
   ngOnInit() {
     this.cargarNoticias();
+  }
+
+  iconoCategoria(categoria: string): string {
+    return ICONO_POR_CATEGORIA[categoria] || 'newspaper-outline';
+  }
+
+  claseCategoria(categoria: string): string {
+    return CLASE_POR_CATEGORIA[categoria] || 'chip-comunicado';
   }
 
   cargarNoticias(event?: any) {

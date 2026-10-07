@@ -1,0 +1,76 @@
+.noticia-item {
+  transition: background-color 0.15s ease;
+
+  &:active {
+    background-color: #f9fafb;
+  }
+}
+
+.noticia-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.noticia-fecha {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ion-color-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.categoria-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+
+  ion-icon {
+    font-size: 0.85rem;
+  }
+}
+
+.chip-academico {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.chip-evento {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.chip-comunicado {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.chip-deportes {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.chip-cultura {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+/** La noticia más reciente se destaca un poco más: título más grande y una franja de color a la izquierda **/
+.noticia-destacada {
+  position: relative;
+  padding-left: 14px;
+  border-left: 3px solid var(--ion-color-primary);
+
+  .app-list-title {
+    font-size: 1.3rem;
+  }
+}

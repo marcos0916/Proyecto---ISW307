@@ -1,24 +1,20 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonButton
-} from '@ionic/angular';
+import { IonButton } from '@ionic/angular';
 
 import { BleClient } from '@capacitor-community/bluetooth-le';
 
+/**
+ * Sección de Bluetooth del módulo "Bluetooth/NFC + Perfil" (mismo estudiante
+ * que Configuración). Vive embebida dentro de PerfilPage mediante el segmento
+ * Perfil/Bluetooth — no es una ruta propia, por eso no trae ion-header ni
+ * ion-content: ya los pone la página que la aloja.
+ */
 @Component({
   selector: 'app-bluetooth',
   templateUrl: './bluetooth.page.html',
   styleUrls: ['./bluetooth.page.scss'],
   imports: [
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
     IonButton,
     CommonModule
   ]
