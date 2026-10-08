@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../services/storage';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { Capacitor } from '@capacitor/core';
 
 import {
   IonContent,
@@ -122,12 +123,33 @@ export class PerfilPage implements OnInit {
     }
   }
 
-  /** Toma una foto con la cámara o la elige de la galería (el usuario decide con el prompt nativo). */
+  /**
+   * Toma una foto con la cámara o la elige de la galería.
+   *
+   * En Android/iOS nativo, Capacitor usa el plugin de cámara real del
+   * sistema operativo (CameraSource.Prompt deja elegir entre cámara y
+   * galería con el selector nativo del dispositivo).
+   *
+   * En navegador (ionic serve / ng serve), CameraSource.Prompt y
+   * CameraSource.Camera dependen de @ionic/pwa-elements, que registra sus
+   * componentes (<pwa-action-sheet>, <pwa-camera-modal>) con su propio
+   * runtime interno de Stencil, separado del runtime compartido
+   * (@stencil/core/internal/client) que usan los componentes de Ionic.
+   * Confirmado en consola: eso produce un choque real entre ambos runtimes
+   * ("Cannot read properties of undefined (reading '$instanceValues$')") y
+   * deja la página sin reaccionar — no es una condición de carrera, es un
+   * conflicto estructural del paquete en este entorno, igual al que ya
+   * habíamos visto con jeep-sqlite/loader. A diferencia de jeep-sqlite,
+   * pwa-elements no publica una forma de registrar sus componentes contra
+   * el runtime compartido, así que en vez de parchear ese paquete, en web
+   * usamos solo el selector de galería (CameraSource.Photos), que es un
+   * <input type="file"> nativo del navegador y no depende de pwa-elements.
+   */
   async cambiarFoto() {
     try {
       const foto = await Camera.getPhoto({
         resultType: CameraResultType.DataUrl,
-        source: CameraSource.Prompt,
+        source: Capacitor.getPlatform() === 'web' ? CameraSource.Photos : CameraSource.Prompt,
         quality: 70,
         width: 400
       });

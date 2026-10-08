@@ -64,6 +64,11 @@ ion-router-outlet {
   bottom: var(--app-tab-bar-height);
 }
 
+/**
+ * Sombra de elevación en vez de línea de borde: la barra "flota" sobre el
+ * contenido en lugar de quedar pegada con una línea dura, siguiendo el
+ * mismo lenguaje visual de elevación que las ion-card de abajo.
+ */
 ion-tab-bar {
   position: fixed;
   left: 0;
@@ -72,9 +77,9 @@ ion-tab-bar {
   height: var(--app-tab-bar-height);
   z-index: 10;
   --background: #ffffff;
-  --border: 1px solid var(--app-divider-color);
   --color: var(--ion-color-medium);
   --color-selected: var(--ion-color-primary);
+  box-shadow: 0 -8px 20px -10px rgba(0, 0, 0, 0.12);
 }
 
 ion-tab-button {
@@ -105,6 +110,49 @@ ion-toolbar {
     font-weight: 700;
     font-size: 1.3rem;
   }
+}
+
+/**
+ * Tarjetas estilo "fintech": esquinas muy redondeadas + sombra de elevación
+ * suave en vez del borde fino plano que trae Ionic por defecto. Radio y
+ * sombra salen de theme/variables.scss (--app-card-radius / --app-card-shadow)
+ * para no repetir los mismos valores en cada página que use ion-card.
+ */
+ion-card {
+  border-radius: var(--app-card-radius);
+  box-shadow: var(--app-card-shadow);
+}
+
+/**
+ * Botones: altura táctil generosa (48px, por encima del mínimo de
+ * accesibilidad de 44px) y esquinas redondeadas en vez de la altura/forma
+ * por defecto de Ionic. min-width en los de fill="clear" (típicamente
+ * botones de un solo ícono, como "volver" o acciones de header) para que
+ * el área táctil no se achique al tamaño del ícono.
+ */
+ion-button {
+  --border-radius: 14px;
+  min-height: 48px;
+  font-weight: 600;
+  text-transform: none;
+
+  &[fill="clear"] {
+    min-width: 44px;
+  }
+}
+
+/**
+ * Campos de formulario: ion-item como "tarjeta de input" con fondo gris
+ * tenue y esquinas redondeadas, en vez de la línea inferior por defecto de
+ * Ionic. Páginas que usan ion-item para otra cosa (filas de ajustes, listas)
+ * pueden seguir pisando esto localmente, como ya hace perfil.page.scss.
+ */
+ion-item {
+  --background: var(--app-field-background);
+  --border-radius: var(--app-field-radius);
+  --padding-start: 14px;
+  --inner-padding-end: 14px;
+  --inner-border-width: 0;
 }
 
 /**
