@@ -1,3 +1,27 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
+
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button routerLink="/inicio" routerLinkActive="tab-selected">
+      <ion-icon name="newspaper-outline"></ion-icon>
+      <ion-label>Inicio</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button routerLink="/tareas" routerLinkActive="tab-selected">
+      <ion-icon name="checkbox-outline"></ion-icon>
+      <ion-label>Tareas</ion-label>
+    </ion-tab-button>
+
+    <ion-tab-button routerLink="/campus" routerLinkActive="tab-selected">
+      <ion-icon name="map-outline"></ion-icon>
+      <ion-label>Campus</ion-label>
+    </ion-tab-button>
+
+    <!-- "Podcasts" vuelve acá cuando se mergee el Módulo 4 (Multimedia, Estudiante D) -->
+
+    <ion-tab-button routerLink="/configuracion" routerLinkActive="tab-selected">
+      <ion-icon name="settings-outline"></ion-icon>
+      <ion-label>Configuración</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
 </ion-app>

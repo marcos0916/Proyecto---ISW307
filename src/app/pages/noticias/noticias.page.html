@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Noticias Universitarias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="recargar($event)">
+    <ion-refresher-content pullingText="Desliza para actualizar..." refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="cargando()" class="ion-text-center ion-padding" style="margin-top: 40px;">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+    <p><ion-text color="medium">Cargando publicaciones...</ion-text></p>
+  </div>
+
+  <div *ngIf="error() && !cargando()" class="ion-text-center ion-padding">
+    <p><ion-text color="danger">{{ error() }}</ion-text></p>
+    <ion-button fill="outline" (click)="cargarNoticias()">Reintentar</ion-button>
+  </div>
+
+  <div class="app-list ion-padding-horizontal">
+    <div
+      class="app-list-item noticia-item"
+      *ngFor="let item of noticias(); let first = first"
+      [class.noticia-destacada]="first">
+      <div class="noticia-meta">
+        <span class="categoria-chip" [ngClass]="claseCategoria(item.categoria)">
+          <ion-icon [name]="iconoCategoria(item.categoria)"></ion-icon>
+          {{ item.categoria }}
+        </span>
+        <span class="noticia-fecha">{{ item.fecha }}</span>
+      </div>
+      <h2 class="app-list-title">{{ item.title }}</h2>
+      <p class="app-list-body">{{ item.body }}</p>
+    </div>
+  </div>
+</ion-content>

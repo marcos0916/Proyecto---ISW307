@@ -34,6 +34,10 @@ log.txt
 npm-debug.log
 yarn-error.log
 
+# SQLite en navegador (jeep-sqlite): se regenera en cada install vía
+# scripts/copy-sqlite-wasm.js (postinstall), no hace falta versionarlo.
+/src/assets/sql-wasm.wasm
+
 # IDEs and editors
 .idea/
 .project
