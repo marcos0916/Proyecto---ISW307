@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IonApp, IonRouterOutlet, IonTabBar, IonTabButton, IonLabel, IonIcon } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { newspaperOutline, checkboxOutline, mapOutline, settingsOutline } from 'ionicons/icons';
+import { newspaperOutline, checkboxOutline, mapOutline, settingsOutline, musicalNotesOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +14,6 @@ import { newspaperOutline, checkboxOutline, mapOutline, settingsOutline } from '
 })
 export class AppComponent {
   constructor() {
-    addIcons({ newspaperOutline, checkboxOutline, mapOutline, settingsOutline });
+    addIcons({ newspaperOutline, checkboxOutline, mapOutline, settingsOutline, musicalNotesOutline });
   }
 }
