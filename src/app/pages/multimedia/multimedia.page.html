@@ -1,3 +1,4 @@
+
 <ion-header>
   <ion-toolbar>
     <ion-title>Multimedia</ion-title>
@@ -6,10 +7,85 @@
 
 <ion-content class="ion-padding">
 
-  <h2>Podcasts</h2>
+
+<section class="multimedia-section">
+  <h2>Pódcast</h2>
+  <p>Escucha nuestros audios.</p>
+
+  <audio controls preload="metadata" style="width: 100%;">
+    <source src="assets/audio/prueba.ogg" type="audio/ogg">
+    Tu dispositivo no admite la reproducción de este audio.
+  </audio>
 
   <p>
-    Aquí estarán disponibles los podcasts del proyecto.
+    <small>
+      Audio de prueba: Wikimedia Commons.
+      Licencia CC BY-SA 3.0.
+    </small>
   </p>
+
+  <audio controls preload="metadata" style="width: 100%;">
+    <source src="/assets/audio/mensaje-inserto.mp3" type="audio/mpeg">
+    Tu dispositivo no admite la reproducción de este audio.
+  </audio>
+
+  <p>
+    <small>
+      Fragmento musical del álbum <u>Azul Marino</u>.
+    </small>
+  </p>
+</section>
+
+  
+  <section class="multimedia-section">
+    <h2>Escáner QR</h2>
+
+    <p>
+      Utiliza la cámara de tu dispositivo para leer códigos QR.
+    </p>
+
+    <ion-button
+      expand="block"
+      (click)="escanearQR()"
+      [disabled]="escaneando">
+      {{ escaneando ? 'Preparando escáner...' : 'Escanear código QR' }}
+    </ion-button>
+
+    <p *ngIf="mensajeQR" role="status">
+      {{ mensajeQR }}
+    </p>
+
+    <div *ngIf="resultadoQR" class="resultado-qr">
+      <h3>Contenido del código</h3>
+      <p>{{ resultadoQR }}</p>
+    </div>
+  </section>
+
+    <section class="multimedia-section">
+    <h2>Cámara</h2>
+
+    <p>
+      Toma una fotografía con la cámara de tu dispositivo.
+    </p>
+
+    <ion-button
+      expand="block"
+      (click)="tomarFoto()">
+      Tomar fotografía
+    </ion-button>
+
+    <p *ngIf="mensajeCamara" role="status">
+      {{ mensajeCamara }}
+    </p>
+
+    <div *ngIf="fotoUrl" class="resultado-foto">
+      <h3>Fotografía capturada</h3>
+
+      <img
+        [src]="fotoUrl"
+        alt="Fotografía tomada con la cámara"
+        style="width: 100%; height: auto; border-radius: 12px;">
+    </div>
+  </section>
 
 </ion-content>
