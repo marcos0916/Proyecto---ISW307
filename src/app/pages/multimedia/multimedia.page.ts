@@ -9,7 +9,8 @@ import {
 } from '@capacitor/camera';
 import {
   BarcodeScanner,
-  BarcodeFormat
+  BarcodeFormat,
+  GoogleBarcodeScannerModuleInstallProgressEvent
 } from '@capacitor-mlkit/barcode-scanning';
 import {
   IonHeader,
@@ -83,7 +84,7 @@ if (!modulo.available) {
   try {
     const listener = await BarcodeScanner.addListener(
       'googleBarcodeScannerModuleInstallProgress',
-      async (evento) => {
+      async (evento: GoogleBarcodeScannerModuleInstallProgressEvent) => {
         console.log('Progreso de instalación QR:', evento);
 
         const comprobacion =
@@ -159,7 +160,7 @@ if (!modulo.available) {
       quality: 90,
       allowEditing: false,
       resultType: CameraResultType.Uri,
-      source: CameraSource.Camera
+      source: Capacitor.isNativePlatform() ? CameraSource.Camera : CameraSource.Photos
     });
 
     this.fotoUrl = foto.webPath || '';

@@ -7,12 +7,6 @@ import { BleClient, BleDevice } from '@capacitor-community/bluetooth-le';
 
 const DURACION_ESCANEO_MS = 10000;
 
-/**
- * Sección de Bluetooth del módulo "Bluetooth/NFC + Perfil" (mismo estudiante
- * que Configuración). Vive embebida dentro de PerfilPage mediante el segmento
- * Perfil/Bluetooth/NFC — no es una ruta propia, por eso no trae ion-header ni
- * ion-content: ya los pone la página que la aloja.
- */
 @Component({
   selector: 'app-bluetooth',
   templateUrl: './bluetooth.page.html',
@@ -24,11 +18,6 @@ const DURACION_ESCANEO_MS = 10000;
   ]
 })
 export class BluetoothPage implements OnDestroy {
-  // Signals en vez de propiedades planas: esta app corre Angular sin zone.js
-  // (ver angular.json, "polyfills": []), así que mutar un campo normal
-  // después de un `await` a un plugin nativo no dispara detección de
-  // cambios. Confirmado con pruebas en vivo: sin esto, "mensaje" y
-  // "dispositivos" nunca se actualizaban en pantalla.
   dispositivos = signal<BleDevice[]>([]);
   buscando = signal(false);
   bluetoothActivado = signal(false);
@@ -94,15 +83,6 @@ export class BluetoothPage implements OnDestroy {
     }
   }
 
-  /**
-   * `requestLEScan` usa la Web Bluetooth Scanning API, que Chrome solo expone
-   * en Android o detrás de un flag experimental de escritorio
-   * (chrome://flags/#enable-experimental-web-platform-features). En un
-   * navegador de escritorio sin ese flag, el método ni existe (confirmado
-   * probando `typeof navigator.bluetooth.requestLEScan` en un Chrome limpio),
-   * así que el error no significa que el código falle: en un Android real,
-   * Capacitor usa el plugin BLE nativo y no pasa por esta limitación.
-   */
   private mensajeErrorEscaneo(): string {
     const esWeb = Capacitor.getPlatform() === 'web';
     const apiNoDisponible = esWeb && typeof (navigator as any).bluetooth?.requestLEScan !== 'function';
@@ -136,7 +116,6 @@ export class BluetoothPage implements OnDestroy {
     }
   }
 
-  /** Evita que el escaneo siga corriendo en segundo plano si el usuario sale de la página. */
   ngOnDestroy() {
     this.cancelarTimeoutEscaneo();
     if (this.buscando()) {

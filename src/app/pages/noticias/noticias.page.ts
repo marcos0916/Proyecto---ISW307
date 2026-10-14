@@ -56,10 +56,6 @@ const CLASE_POR_CATEGORIA: Record<string, string> = {
   ]
 })
 export class NoticiasPage implements OnInit {
-  // Signals en vez de propiedades planas: esta app corre Angular sin zone.js
-  // (ver angular.json, "polyfills": []), así que mutar un campo normal dentro
-  // de un callback de .subscribe() no dispara detección de cambios. Los
-  // signals sí lo hacen.
   noticias = signal<Noticia[]>([]);
   cargando = signal(true);
   error = signal<string | null>(null);

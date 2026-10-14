@@ -1,10 +1,5 @@
 import { Directive, EventEmitter, HostBinding, HostListener, Input, NgZone, OnDestroy, Output } from '@angular/core';
 
-/**
- * Emite `longPress` tras mantener presionado el elemento host `duration` ms.
- * Se cancela si el puntero se suelta antes, o si se mueve más de `moveThreshold`px
- * (para no competir con el swipe de ion-item-sliding).
- */
 @Directive({
   selector: '[appLongPress]',
   standalone: true

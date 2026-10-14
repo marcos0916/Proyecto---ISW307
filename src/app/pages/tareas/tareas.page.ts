@@ -32,10 +32,7 @@ import { LongPressDirective } from '../../directives/long-press.directive';
   ]
 })
 export class TareasPage implements OnInit {
-  // Estado reactivo con signals: esta app corre Angular sin zone.js (ver angular.json,
-  // "polyfills": []), así que una reasignación de propiedad normal tras un `await` NO
-  // dispara detección de cambios. Los signals sí lo hacen, por eso todo el estado mutable
-  // vive aquí en vez de en campos de clase planos.
+
   tareas = signal<Tarea[]>([]);
   busqueda = signal('');
 
@@ -114,11 +111,6 @@ export class TareasPage implements OnInit {
     await this.abrirModalTarea(tarea);
   }
 
-  /**
-   * Solo se puede arrastrar cuando no hay búsqueda activa (el reorder-group se deshabilita
-   * en ese caso desde el template), así los índices del evento siempre corresponden
-   * a la lista completa sin filtrar.
-   */
   async onReorder(event: ReorderEndCustomEvent) {
     const reordenada = event.detail.complete(this.tareas()) as Tarea[];
     this.tareas.set(reordenada);

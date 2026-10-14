@@ -42,11 +42,6 @@ ion-card-title {
   font-weight: 700;
 }
 
-/**
- * Espaciado entre campos/filas: ion-item ya trae fondo gris y esquinas
- * redondeadas desde global.scss (estilo "tarjeta de input"), acá solo se
- * agrega separación vertical entre una fila y la siguiente.
- */
 ion-item {
   margin-bottom: 10px;
 

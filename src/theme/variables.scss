@@ -1,10 +1,4 @@
-// Paleta clara y accesible para toda la app, estilo "fintech" (tarjetas
-// flotantes sobre fondo claro, azul como color primario, dorado como acento
-// de contraste), manteniendo el mismo criterio de siempre: alto contraste
-// de texto y nada del tema oscuro por defecto de Ionic.
-
 :root {
-  /** Primario: azul accesible, contraste AA sobre blanco y sobre fondo oscuro propio **/
   --ion-color-primary: #2563eb;
   --ion-color-primary-rgb: 37, 99, 235;
   --ion-color-primary-contrast: #ffffff;
@@ -12,7 +6,6 @@
   --ion-color-primary-shade: #1d4ed8;
   --ion-color-primary-tint: #3b72ed;
 
-  /** Acento dorado (CTAs secundarios, destacados) — contraste con texto oscuro, no blanco **/
   --ion-color-secondary: #f59e0b;
   --ion-color-secondary-rgb: 245, 158, 11;
   --ion-color-secondary-contrast: #111827;
@@ -62,13 +55,6 @@
   --ion-color-light-shade: #d6d7d9;
   --ion-color-light-tint: #f4f5f7;
 
-  /**
-   * Fondo y texto base de toda la app. El fondo es un gris muy claro (no
-   * blanco puro) para que las tarjetas blancas floten por contraste además
-   * de por sombra — si ambos fueran blanco puro, la sombra sería la única
-   * pista visual de elevación. Contraste de texto sigue siendo altísimo
-   * (#111827 sobre #f8fafc), no hay pérdida de legibilidad.
-   */
   --ion-background-color: #f8fafc;
   --ion-background-color-rgb: 248, 250, 252;
   --ion-text-color: #111827;
@@ -78,22 +64,11 @@
   --ion-toolbar-background: #ffffff;
   --ion-card-background: #ffffff;
 
-  /** Línea de separación fina, reutilizada por el estilo "lista tipo glosario" **/
   --app-divider-color: #e5e7eb;
 
-  /**
-   * Tokens de la tarjeta "fintech": radio y sombra de elevación en un solo
-   * lugar para que global.scss (y cualquier página que los necesite) no
-   * repita los mismos valores de box-shadow/border-radius.
-   */
   --app-card-radius: 20px;
   --app-card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
 
-  /**
-   * Tokens de campo de formulario (ion-item usado como input): fondo gris
-   * tenue en vez de la línea inferior por defecto de Ionic. --ion-color-dark
-   * sobre este fondo da ~15:1 de contraste, muy por encima del mínimo AA.
-   */
   --app-field-background: #f1f5f9;
   --app-field-radius: 12px;
 }

@@ -5,7 +5,6 @@ export interface Perfil {
   nombre: string;
   carrera: string;
   correo: string;
-  /** Data URL (base64) de la foto de perfil, o vacío si no hay foto guardada. */
   foto?: string;
 }
 
@@ -21,7 +20,6 @@ export interface RegistroCompartido {
   tipo: string;
 }
 
-/** Claves usadas en Ionic Storage, centralizadas para no repetir strings sueltos. */
 const CLAVE_PERFIL = 'perfil';
 const CLAVE_CONFIGURACION = 'configuracion';
 const CLAVE_HISTORIAL = 'historialCompartidos';

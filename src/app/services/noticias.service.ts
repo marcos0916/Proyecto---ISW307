@@ -11,17 +11,6 @@ export interface Noticia {
   categoria: string;
 }
 
-/**
- * jsonplaceholder.typicode.com (la API que sugiere la consigna para "simular
- * noticias") devuelve texto de relleno en pseudo-latín, no contenido real.
- * Seguimos consumiendo esa API de verdad (GET real, loading, manejo de
- * errores, pull-to-refresh), pero el título/cuerpo que se muestra es contenido
- * real de prensa de la UAPA (uapa.edu.do/noticias), resumido para tarjeta —
- * por id, así el mismo post.id siempre cae en la misma noticia. La fecha NO
- * es la fecha real de publicación: se calcula relativa a "ahora" (ver
- * `fecha` más abajo) para que la lista siempre se vea reciente sin importar
- * cuándo se abra la app.
- */
 const BANCO_NOTICIAS: { categoria: string; title: string; body: string }[] = [
   { categoria: 'Evento', title: 'UAPA y Defensor del Pueblo realizan segunda clase sobre la evolución de la Constitución dominicana', body: 'La Escuela de Ciencias Jurídicas y Políticas, con el apoyo del Defensor del Pueblo, realizó la segunda clase de «Constitución Viva para Todos y Todas», con la participación de cinco facilitadores.' },
   { categoria: 'Evento', title: 'UAPA analiza «nuevas tendencias legislativas»', body: 'Bajo el título «Nuevas Tendencias Legislativas en el Derecho Penal Dominicano», la Escuela de Ciencias Jurídicas y Políticas realizó un seminario con expertos del área penal.' },

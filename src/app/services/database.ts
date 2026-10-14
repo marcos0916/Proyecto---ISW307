@@ -44,22 +44,18 @@ export class DatabaseService {
       );
     `);
 
-    // Migración liviana: bases creadas con una versión anterior del esquema no tienen
-    // la columna "orden". Se verifica con PRAGMA en vez de probar/capturar el ALTER,
-    // porque el puente web de Capacitor no siempre propaga ese rechazo de forma limpia.
+    
     const columnas = await this.db.query('PRAGMA table_info(tareas);');
     const tieneOrden = (columnas.values || []).some((c: { name: string }) => c.name === 'orden');
     if (!tieneOrden) {
       await this.db.execute('ALTER TABLE tareas ADD COLUMN orden INTEGER;');
     }
 
-    // Tareas existentes sin "orden" asignado quedan ordenadas por id de creación.
     await this.db.run('UPDATE tareas SET orden = id WHERE orden IS NULL;');
 
     await this.sembrarDatosIniciales();
   }
 
-  /** Primera ejecución con la tabla vacía: deja un par de tareas de ejemplo. */
   private async sembrarDatosIniciales(): Promise<void> {
     const conteo = await this.db.query('SELECT COUNT(*) AS total FROM tareas;');
     if ((conteo.values?.[0]?.total ?? 0) > 0) return;
@@ -75,7 +71,6 @@ export class DatabaseService {
     );
   }
 
-  /** jeep-sqlite tarda un instante en registrarse e inicializar su propio store en IndexedDB. */
   private async esperarJeepSqlite(): Promise<void> {
     await customElements.whenDefined('jeep-sqlite');
     const jeepEl = document.querySelector('jeep-sqlite') as (HTMLElement & { componentOnReady?: () => Promise<unknown> }) | null;
@@ -111,7 +106,6 @@ export class DatabaseService {
     await this.db.run('DELETE FROM tareas WHERE id = ?;', [id]);
   }
 
-  /** Persiste el nuevo orden tras un drag & drop. `idsEnOrden` ya viene en el orden final deseado. */
   async reordenarTareas(idsEnOrden: number[]): Promise<void> {
     const statements = idsEnOrden.map((id, index) => ({
       statement: 'UPDATE tareas SET orden = ? WHERE id = ?;',

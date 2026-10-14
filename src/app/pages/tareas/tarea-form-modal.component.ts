@@ -169,7 +169,6 @@ export interface TareaFormResult {
   `]
 })
 export class TareaFormModalComponent implements OnInit {
-  /** Cuando viene seteada, el modal entra en modo edición y precarga sus campos. */
   @Input() tarea: Tarea | null = null;
 
   titulo = '';

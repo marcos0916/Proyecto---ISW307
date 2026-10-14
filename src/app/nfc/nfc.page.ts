@@ -7,14 +7,8 @@ import {
 import { CapacitorNfc, NdefRecord, PluginListenerHandle } from '@capgo/capacitor-nfc';
 import { StorageService, RegistroCompartido } from '../services/storage';
 
-/** Cuánto esperamos a que el usuario acerque un tag antes de cancelar el envío. */
 const ESPERA_TAG_NFC_MS = 15000;
 
-/**
- * Sección de NFC del módulo "Bluetooth/NFC + Perfil" (mismo módulo que
- * Bluetooth y Configuración). Vive embebida dentro de PerfilPage mediante el
- * segmento Perfil/Bluetooth/NFC — por eso no trae ion-header ni ion-content.
- */
 @Component({
   selector: 'app-nfc',
   templateUrl: './nfc.page.html',
@@ -25,13 +19,10 @@ const ESPERA_TAG_NFC_MS = 15000;
   ]
 })
 export class NfcPage implements OnInit, OnDestroy {
-  // Signals por la misma razón que en BluetoothPage y PerfilPage: esta app
-  // corre sin zone.js, así que el estado mutado tras un `await` o un
-  // listener de plugin no se reflejaría en pantalla sin esto.
   texto = signal('');
   estado = signal('');
   enviando = signal(false);
-  soportado = signal<boolean | null>(null); // null = todavía no se comprobó
+  soportado = signal<boolean | null>(null);
 
   historial = signal<RegistroCompartido[]>([]);
 
@@ -58,7 +49,6 @@ export class NfcPage implements OnInit, OnDestroy {
     }
   }
 
-  /** Tap-to-share: escribe el texto como registro NDEF en el próximo tag NFC que se acerque. */
   async compartir() {
     const texto = this.texto().trim();
     if (!texto) {
@@ -123,11 +113,6 @@ export class NfcPage implements OnInit, OnDestroy {
     this.historial.set([]);
   }
 
-  /**
-   * Inicia el escaneo NFC y espera a que se detecte un tag para escribirle el
-   * texto. Se resuelve `true` si la escritura fue real y exitosa, `false` si
-   * no se detectó ningún tag dentro del tiempo límite.
-   */
   private esperarTagYEscribir(texto: string): Promise<boolean> {
     return new Promise((resolve) => {
       let resuelto = false;
@@ -168,16 +153,15 @@ export class NfcPage implements OnInit, OnDestroy {
     }
   }
 
-  /** Arma un registro NDEF de texto (RTD_TEXT) según la especificación del NFC Forum. */
   private crearRegistroTexto(texto: string): NdefRecord {
     const idioma = 'es';
     const idiomaBytes = Array.from(idioma).map(c => c.charCodeAt(0));
     const textoBytes = Array.from(new TextEncoder().encode(texto));
-    const statusByte = idiomaBytes.length; // bit7=0 (UTF-8), bits0-5 = longitud del código de idioma
+    const statusByte = idiomaBytes.length;
 
     return {
-      tnf: 1, // TNF_WELL_KNOWN
-      type: [0x54], // 'T'
+      tnf: 1,
+      type: [0x54],
       id: [],
       payload: [statusByte, ...idiomaBytes, ...textoBytes]
     };
